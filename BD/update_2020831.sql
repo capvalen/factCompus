@@ -1,0 +1,2 @@
+ALTER TABLE `fact_cabecera` CHANGE `factTipoDocumento` `factTipoDocumento` INT(11) NULL DEFAULT '0' COMMENT 'B(3),F(1),Ext(4)';
+INSERT INTO `configuracion` (`idConf`, `confVariable`, `confValor`) VALUES (NULL, 'igvGlobal', '18');

@@ -1,0 +1,17 @@
+#modalNuevoPersonal p{
+	margin-top: 5px;
+	margin-bottom: 0;
+}
+/* #menuInfocat  */.dropdown-item:active{
+	background-color: #7030a0;
+}
+.hTitulo{
+	color: #7030a0;
+}
+.modal-backdrop.show{
+	opacity: 0.8;
+}
+.form-control:focus{
+	border-color: #756782;
+	box-shadow: 0 0 0 0.2rem rgb(104 15 202 / 32%);
+}

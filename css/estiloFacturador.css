@@ -1,0 +1,78 @@
+.bg-dark {
+	background-color: #7030a0!important;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+		/* display: none; <- Crashes Chrome on hover */
+		-webkit-appearance: none;
+		margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input[type=number] {
+		-moz-appearance:textfield; /* Firefox */
+}
+#txtPlacaBoleta::placeholder{
+	font-family:'Icofont', 'Segoe UI';
+	text-align: right;
+}
+.bootstrap-select .dropdown-toggle .filter-option{font-family:'Icofont', 'Segoe UI';}
+.close{color: #ff0202}
+.close:hover, .close:not(:disabled):not(.disabled):hover{color: #fd0000;opacity:1;}
+#imgLogo{max-width:250px;}
+.bootstrap-select .btn-light{background-color: #ffffff;}
+.bootstrap-select .dropdown-toggle .filter-option{    border: 1px solid #ced4da;
+		border-radius: .25rem;}
+thead tr th{cursor: pointer;}
+.dropdown-item .text, .bootstrap-select button{text-transform: capitalize;}
+#divCalculosFinales span{font-size:1.1rem;}
+.btn-outline-primary {
+		color: #663cdc;
+		border-color: #663cdc;
+}
+.btn-outline-primary:hover, .btn-outline-primary:hover, .btn-outline-primary:not(:disabled):not(.disabled):active{
+	background-color: #663cdc;
+	border-color: transparent;
+}
+.btn-outline-primary:focus {
+	box-shadow: 0 0 0 0.2rem rgba(148, 102, 239, 0.5);
+}
+#overlay {
+		position: fixed; /* Sit on top of the page content */
+		display: none; /* Hidden by default */
+		width: 100%; /* Full width (cover the whole page) */
+		height: 100%; /* Full height (cover the whole page) */
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-color: rgba(0,0,0,0.75); /* Black background with opacity */
+		z-index: 1051; /* Specify a stack order in case you're using a different order for other elements */
+	 /* Add a pointer on hover */
+}
+#overlay .text{position: absolute;
+		top: 50%;
+		left: 50%;
+		font-size: 18px;
+		color: white;
+		user-select: none;
+		transform: translate(-50%,-50%);
+}
+#hojita{font-size: 36px; display: inline; animation: cargaData 6s ease infinite;}
+#pFrase{ display: inline; }
+#pFrase span{ font-size: 13px;}
+@keyframes cargaData {
+		0%  {color: #96f368;}
+		25%  {color: #f3dd68;}
+		50% {color: #f54239;}
+		75% {color: #c173ce;}
+		100% {color: #33dbdb;}
+}
+thead{
+	color: #7030a0
+}
+#spanErrorFinal, #spanLimiteSobrepasado{
+	padding: 15px;
+	background: #d81a2c;
+	color: white!important;
+	border-radius: 5px;
+}
