@@ -1,3 +1,3 @@
 <?=
-"Versión 1.56 Compilación 22.1117 - 2022";
+"Versión 1.58 Compilación 23.0526 - 2023";
 ?>

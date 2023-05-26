@@ -11,50 +11,6 @@
 	<link rel="stylesheet" href="../css/alertify.min.css">
 </head>
 <body>
-<style>
-	h1,h2,h3,h4,h5{ color:#43484e; }
-	#listadoClientes{ color:darkgrey}
-	#listadoClientes .razon{ font-size: 0.8rem; color: rgb(58 58 58 / 67%); }
-	#listadoClientes .ruc{ font-size: 0.7rem; }
-	#listadoClientes .row:hover, #divProductosVarios .row:hover{ background:rgb(232 232 232 / 89%); cursor:pointer; }
-	.cuadroMouse:hover{ background:#7e39b152; cursor:pointer; }
-	#cuadroCliente .btn{font-size: 0.8rem; border-color: #cacaca;}
-	.noselect {
-  -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-     -khtml-user-select: none; /* Konqueror HTML */
-       -moz-user-select: none; /* Old versions of Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome, Edge, Opera and Firefox */
-}
-	#divRegistroCliente input{
-		margin: 0.5rem 0;
-	}
-	.alertify-notifier .ajs-message.ajs-error {
-		background: rgb(239 4 4 / 95%);
-		color: white;
-		border-radius: 2rem;
-	}
-	.alertify-notifier .ajs-message.ajs-warning {
-		background: rgb(255 143 29 / 95%);
-		color: white;
-		border-radius: 2rem;
-	}
-	.alertify-notifier .ajs-message {
-			background: rgb(29 57 255 / 95%);
-			color: white;
-			border-radius: 2rem;
-	}
-	.alertify-notifier .ajs-message{
-		width: 360px!important;
-		right: 390px!important;
-	}
-	#datosEmpresa p{
-    line-height: 1.3;
-	}
-	.close{color: #de1212;opacity: 0.8;}
-</style>
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark pl-5" id="menuInfocat" style="background-color: #7030a0!important;">
 		<a class="navbar-brand" href="#">
 			<img src="../images/VirtualCorto.png" width="60" height="60" alt="">
@@ -158,9 +114,17 @@
 					<div class="col"><p class="my-2"><small><strong>Coincidencias</strong></small></p></div>
 					<div class="col mt-2"><button class="btn btn-outline-success btn-sm float-right border-0" @click="productos=[]; prodBuscar='';"><i class="bi bi-eraser"></i> Limpiar</button></div>
 				</div>
-				<div id="divProductosVarios" v-if="productos.length >0">
-					<div class="row py-2 border-bottom noselect" v-for="(busqueda, item) in productos" @click="llenarProductos(item)">
-						<div class="col "><small>{{item+1}}. {{busqueda.prodDescripcion}}</small></div> 
+				<div class="divProductosVarios" v-if="productosNombre.length >0">
+					<div class="row py-2 border-bottom noselect" v-for="(busqueda, item) in productosNombre" @click="llenarProductos(item)">
+						<div class="col text-capitalize"><small>{{item+1}}. {{busqueda.prodDescripcion}}</small></div> 
+						<div class="col-2 text-secondary"><small><strong>{{busqueda.prodStock}} unds.</strong></small></div> 
+						<div class="col-2 text-secondary"><small><strong>S/ {{parseFloat(busqueda.prodPrecio).toFixed(2)}}</strong></small></div> 
+						<div class="col-1 d-flex justify-content-center"><i class="bi bi-box-arrow-right"></i></div>
+					</div>
+					</div>
+				<div class="divProductosVarios" v-if="productosSerie.length >0">
+					<div class="row py-2 border-bottom noselect" v-for="(busqueda, item) in productosSerie" @click="llenarProductosSerie(item)">
+						<div class="col text-capitalize"><small>{{item+1}}. {{busqueda.prodDescripcion}}</small></div> 
 						<div class="col-2 text-secondary"><small><strong>{{busqueda.prodStock}} unds.</strong></small></div> 
 						<div class="col-2 text-secondary"><small><strong>S/ {{parseFloat(busqueda.prodPrecio).toFixed(2)}}</strong></small></div> 
 						<div class="col-1 d-flex justify-content-center"><i class="bi bi-box-arrow-right"></i></div>
@@ -171,14 +135,14 @@
 			</div>
 			<div class="col-md-4 p-3">
 				
-				<center><img :src="'../'+empresa.logo" alt="" style="max-width: 40%;"></center>
+				<center><img :src="'../'+empresa.logo" alt="" style="max-width: 30%;"></center>
 				<div id="canastaProductos">
 					<p class="text-center mb-1"><strong>{{venta}}</strong></p>
 
 					<div id="datosEmpresa">
 						<p class="text-center mb-0"><strong>{{empresa.ruc}}</strong></p>
 						<p class="text-center mb-0" v-if="empresa.nomComercial!=''"><strong>{{empresa.nomComercial}}</strong></p>
-						<p class="text-center mb-0"><small><span v-if="empresa.nomComercial!=''">De:</span> {{empresa.razonSocial}}</small></p>
+						<p class="text-center mb-0" v-if="empresa.ruc.substring(0,2)=='10'"><small><span v-if="empresa.nomComercial!=''">De:</span> {{empresa.razonSocial}}</small></p>
 						<p class="text-center mb-0"><small>{{empresa.direccion}}</small></p>
 						<p class="text-center mb-0" v-if="empresa.celular!=''"><small>{{empresa.celular}}</small></p>
 					</div>
@@ -187,29 +151,31 @@
 						<div class="col-3 text-center"><p class="mb-0"><small><strong>S/ <span>{{sumaTotal}}</span></strong></small></p></div>
 					</div>
 					<div class="border-bottom"></div>
-					<div class="row py-2 border-bottom" v-for="(producto, item) in canasta" @click="editarProducto(item)">
-						<div class="col-1 cuadroMouse noselect d-flex justify-content-center" @click.stop="restarItem(item)"><i class="bi bi-dash-square"></i></div>
-						<div class="col noselect"><small>{{producto.cantidad}} {{producto.unidad}} {{producto.nombre}}</small></div>
-						<div class="col-2 noselect text-secondary"><small><strong>{{parseFloat(producto.subTotal).toFixed(2)}}</strong></small> </div>
-						<div class="col-1 cuadroMouse noselect d-flex justify-content-center" @click.stop="sumarItem(item)"> <i class="bi bi-plus-square"></i></div>
+					<div id="divCanastaProductos">
+						<div class="row py-2 border-bottom" v-for="(producto, item) in canasta" @click="editarProducto(item)">
+							<div class="col-1 cuadroMouse noselect d-flex justify-content-center" @click.stop="restarItem(item)"><i class="bi bi-dash-square"></i></div>
+							<div class="col noselect text-capitalize"><small>{{producto.cantidad}} {{producto.unidad}} {{producto.nombre}} <span v-if="producto.serie!=''">({{producto.serie}})</span></small></div>
+							<div class="col-2 noselect text-secondary"><small><strong>{{parseFloat(producto.subTotal).toFixed(2)}}</strong></small> </div>
+							<div class="col-1 cuadroMouse noselect d-flex justify-content-center" @click.stop="sumarItem(item)"> <i class="bi bi-plus-square"></i></div>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 
 		<!-- Modal para: -->
-		<div class='modal fade' id='modalEditarProducto' tabindex='-1'>
+		<div class='modal fade' id='modalEditarProducto' tabindex='-1' data-backdrop="static" data-keyboard="false" >
 			<div class='modal-dialog modal-sm modal-dialog-centered'>
 				<div class='modal-content'>
 					<div class='modal-body'>
-						<button type='button' class='close' data-dismiss='modal' aria-label='Close'> <span aria-hidden='true'>&times;</span></button>
+						<!-- <button type='button' class='close' data-dismiss='modal' aria-label='Close'> <span aria-hidden='true'>&times;</span></button> -->
 						
 						<p class="mt-4 mb-2">Estas editando: <strong class="text-capitalize" id="queEdito"></strong></p>
 						<p>Precio: S/ <span id="txtPrecioProducto"></span></p>
 						<label for="">Cantidad</label>
-						<input type="text" class="form-control" v-if="canasta.length>0" v-model="canasta[idProducto].cantidad" >
-						
+						<input type="number" class="form-control mb-2" v-on:keyup.enter="actualizarProducto()" v-if="canasta.length>0 && idProducto>=0" v-model="canasta[idProducto].cantidad" min="1" >
 						<div >
+							<label for="">Precio</label>
 							<select name="" id="sltPreciosEspeciales" class="form-control" @change="precioDe">
 								<option :value="preciosEspeciales.normal" v-if="preciosEspeciales.normal>0">Normal</option>
 								<option :value="preciosEspeciales.descuento" v-if="preciosEspeciales.descuento>0">Con descuento</option>
@@ -224,6 +190,40 @@
 				</div>
 			</div>
 		</div>
+		<!-- Modal para: -->
+		<div class='modal fade' id='modalRellenarSeries' tabindex='-1' data-backdrop="static" data-keyboard="false" >
+			<div class='modal-dialog modal-lg modal-dialog-centered'>
+				<div class='modal-content'>
+					<div class='modal-body'>
+						<button type='button' class='close' data-dismiss='modal' aria-label='Close'> <span aria-hidden='true'>&times;</span></button>
+						
+						<p class="mt-4 mb-2">Rellene las series que hacen falta:</strong></p>
+						<table class="table table hover">
+							<thead>
+								<td>N°</td>
+								<td>Producto</td>
+								<td>Serie</td>
+								<td>@</td>
+							</thead>
+							<tbody id="tLineasSerie">
+								<tr v-for="(separa, index) in separados" >
+									<td>{{index+1}}</td>
+									<td class="text-capitalize">{{ separa.nombre }} <span v-if="separa.repite!=undefined">N° {{separa.repite+1}}</span></td>
+									<td v-if="separa.pideSerie=='1'"> <input class="form-control" type="text" v-model="separa.serie" @keyup.enter="siguienteLinea(index)"> </td>
+									<td v-else>-</td>
+									<td><button class="btn btn-sm btn-outline-danger" @click="limpiarLinea(index)"><i class="bi bi-eraser"></i></button></td>
+								</tr>
+							</tbody>
+						</table>
+						
+						<div class='d-flex justify-content-end mt-3'>
+							<button type='button' class='btn btn-outline-primary btn-sm' data-dismiss="modal" @click="guardar()"><i class="bi bi-arrow-down-up"></i> Emitir Comprobante</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
 	</div> <!-- fin de app -->
 
 <script src="../js/jquery.min.js"></script>
@@ -236,7 +236,7 @@
 	var app = new Vue({
 		el: '#app',
 		data: {
-			empresa:[],
+			empresa:{ruc: ''},
 			cliBuscar: '', prodBuscar:'', tipoVenta:0, venta: 'Ticket interno', serie: null,
 			clientes: [{
 				idCliente: 1,
@@ -245,10 +245,8 @@
 			}],
 			clienteActual:{dni: '00000000', razon: 'Cliente simple', idCliente:1, tipo:'persona', direccion:''},
 			modoCliente:null, idProducto:-1, preciosEspeciales:[],
-			productos:[],
-			canasta:[],
-			impresionTicket:true
-			
+			canasta:[], impresionTicket:true, separados:[],
+			productos:[],productosNombre:[],productosSerie:[],
 		},
 		mounted(){
 			this.datosEmpresa();
@@ -258,7 +256,6 @@
 				axios.post('../php/datosEmpresa.php')
 				.then((response)=>{ app.empresa= response.data})
 				.catch((error)=>{ console.log( error );});
-				
 			},
 			buscarCliente(){
 				if(this.cliBuscar!=''){
@@ -377,36 +374,77 @@
 					}
 				}
 			},
-			llenarProductos(item){
+			llenarProductosSerie(item){
 				//console.log('total productos es '+ this.productos.length );
-				if(this.productos.length==1){
+				if(this.productosSerie.length==1){
 					this.canasta.push({
-						id: this.productos[0].idProductos,
-						nombre: this.productos[0].prodDescripcion,
+						id: this.productosSerie[0].idProductos,
+						nombre: this.productosSerie[0].prodDescripcion,
 						cantidad: 1,
 						unidad: 'Und.',
 						unidadSunat: 'NIU',
-						precio: this.productos[0].prodPrecio,
-						mayor: this.productos[0].prodPrecioMayor,
-						descuento: this.productos[0].prodPrecioDescto,
-						afecto: this.productos[0].idGravado,
-						subTotal: this.productos[0].prodPrecio
+						precio: this.productosSerie[0].prodPrecio,
+						mayor: this.productosSerie[0].prodPrecioMayor,
+						descuento: this.productosSerie[0].prodPrecioDescto,
+						afecto: this.productosSerie[0].idGravado,
+						subTotal: this.productosSerie[0].prodPrecio,
+						serie: this.productosSerie[0].barra,
+						pideSerie: this.productosSerie[0].series,
 					});
 					//console.log( this.canasta );
-				}else if(this.productos.length==0){
-					alertify.error('<i class="bi bi-exclamation-diamond-fill"></i> No existe coincidencias en la búsqueda: <br> <small><strong class="ml-3">«'+this.prodBuscar+'»</strong></small>');
-				}else if(this.productos.length>1){
+				}
+				if(this.productosSerie.length>1){
 					this.canasta.push({
-						id: this.productos[item].idProductos,
-						nombre: this.productos[item].prodDescripcion,
+						id: this.productosSerie[item].idProductos,
+						nombre: this.productosSerie[item].prodDescripcion,
 						cantidad: 1,
 						unidad: 'Und.',
 						unidadSunat: 'NIU',
-						precio: this.productos[item].prodPrecio,
-						mayor: this.productos[item].prodPrecioMayor,
-						descuento: this.productos[item].prodPrecioDescto,
-						afecto: this.productos[item].idGravado,
-						subTotal: this.productos[item].prodPrecio
+						precio: this.productosSerie[item].prodPrecio,
+						mayor: this.productosSerie[item].prodPrecioMayor,
+						descuento: this.productosSerie[item].prodPrecioDescto,
+						afecto: this.productosSerie[item].idGravado,
+						subTotal: this.productosSerie[item].prodPrecio,
+						serie: this.productosSerie[item].barra,
+						pideSerie: this.productosSerie[item].series,
+					});
+				}
+				this.prodBuscar='';
+				$('#txtBusquedaProducto').focus();
+			},
+			llenarProductos(item){
+				//console.log('total productos es '+ this.productosNombre.length );
+				if(this.productosNombre.length==1){
+					this.canasta.push({
+						id: this.productosNombre[0].idProductos,
+						nombre: this.productosNombre[0].prodDescripcion,
+						cantidad: 1,
+						unidad: 'Und.',
+						unidadSunat: 'NIU',
+						precio: this.productosNombre[0].prodPrecio,
+						mayor: this.productosNombre[0].prodPrecioMayor,
+						descuento: this.productosNombre[0].prodPrecioDescto,
+						afecto: this.productosNombre[0].idGravado,
+						subTotal: this.productosNombre[0].prodPrecio,
+						serie:'',
+						pideSerie: this.productosNombre[0].series,
+					});
+					//console.log( this.canasta );
+				}
+				if(this.productosNombre.length>1){
+					this.canasta.push({
+						id: this.productosNombre[item].idProductos,
+						nombre: this.productosNombre[item].prodDescripcion,
+						cantidad: 1,
+						unidad: 'Und.',
+						unidadSunat: 'NIU',
+						precio: this.productosNombre[item].prodPrecio,
+						mayor: this.productosNombre[item].prodPrecioMayor,
+						descuento: this.productosNombre[item].prodPrecioDescto,
+						afecto: this.productosNombre[item].idGravado,
+						subTotal: this.productosNombre[item].prodPrecio,
+						serie:'',
+						pideSerie: this.productosNombre[item].series,
 					});
 				}
 				this.prodBuscar='';
@@ -414,10 +452,20 @@
 			},
 			buscarProducto(){
 				if(this.prodBuscar!=''){
+					this.productos=[];
 					axios.post('../php/buscarProducto.php', {texto: this.prodBuscar})
-					.then((response)=>{ //console.log( response.data );
-						app.productos=response.data;
-						app.llenarProductos();
+					.then((response)=>{ console.log( response.data );
+						this.productosNombre = response.data.productos
+						this.productosSerie = response.data.serie
+						//this.productos = {productos: response.data.productos, serie: response.data.serie }
+						/* this.productos['productos'] = response.data.productos
+						this.productos['serie'] = response.data.serie */
+						/* response.data.productos.forEach(prod=> app.productos.push(prod) )
+						response.data.serie.forEach(prod=> app.productos.push(prod) ) */
+						if(this.productosSerie.length == 0 && this.productosNombre.length==0)
+							alertify.error('<i class="bi bi-exclamation-diamond-fill"></i> No existe coincidencias en la búsqueda: <br> <small><strong class="ml-3">«'+this.prodBuscar+'»</strong></small>');
+						this.productosNombre.length>0 && this.productosSerie.length==0 ? this.llenarProductos() : false;
+						this.productosSerie.length>0 && this.productosNombre.length==0 ? this.llenarProductosSerie() : false;
 					})
 					.catch((error)=>{ console.log( error );});
 				}
@@ -457,10 +505,9 @@
 						}else if( this.canasta.length==0 ){
 							alertify.error('<i class="bi bi-exclamation-diamond-fill"></i> La factura debe tener al menos 1 producto.').delay(15);
 						}else{
-							alertify.message('<i class="bi bi-info-circle"></i> Generando la factura, espere ').delay(15);
 							//mandar a guardar e impr
 							this.serie= this.empresa.serieFactura;
-							this.guardar();
+							this.checkVacios();
 						}
 					break;
 					case 3: case '3': //Boleta
@@ -471,43 +518,77 @@
 						}else if( this.canasta.length==0 ){
 							alertify.error('<i class="bi bi-exclamation-diamond-fill"></i> La boleta debe tener al menos 1 producto.').delay(15);
 						}else{
-							alertify.message('<i class="bi bi-info-circle"></i> Generando la factura, espere ').delay(15);
 							this.serie= this.empresa.serieBoleta;
 							//mandar a guardar e impr
-							this.guardar();
+							this.checkVacios();
 						}
 					break;
 					case 0: case '0': //Otros=Ticket
 						if( this.canasta.length==0 ){
 							alertify.error('<i class="bi bi-exclamation-diamond-fill"></i> La venta debe tener al menos 1 producto.').delay(15);
 						}else{
-							alertify.message('<i class="bi bi-info-circle"></i> Generando la factura, espere ').delay(15);
 							this.serie = '';
 							//mandar a guardar e impr
-							this.guardar();
+							this.checkVacios();
 						}
 					break;
 					case -1: case '-1':
 					if( this.canasta.length==0 ){
 							alertify.error('<i class="bi bi-exclamation-diamond-fill"></i> La venta debe tener al menos 1 producto.').delay(15);
 						}else{
-							alertify.message('<i class="bi bi-info-circle"></i> Generando la factura, espere ').delay(15);
 							this.serie = '';
 							//mandar a guardar e impr
-							this.guardar();
+							this.checkVacios();
 						}
 					break;
 				}
 				
 			},
+			checkVacios(){
+				let vacios = 0; this.separados=[];
+				this.canasta.forEach(prod=>{ console.log(prod);
+					if( prod.cantidad==1 ){
+						this.separados.push(prod)
+						if (prod.serie=='') vacios++
+					}else{
+						for(i=0; i<prod.cantidad; i++){
+							this.separados.push({
+								id: prod.id,
+								nombre: prod.nombre,
+								cantidad: 1,
+								unidad: 'Und.',
+								unidadSunat: 'NIU',
+								precio: prod.precio,
+								mayor: prod.mayor,
+								descuento: prod.descuento,
+								afecto: prod.afecto,
+								subTotal: prod.subTotal,
+								serie: i==0 ? prod.serie : '',
+								repite: i,
+								pideSerie: prod.pideSerie
+							});
+							if (i>0) vacios++
+						}
+						vacios++
+					}
+				});
+				console.log('vacios',vacios);
+				if(vacios>0){
+					$('#modalRellenarSeries').modal('show');
+				}else{
+					alertify.message('<i class="bi bi-info-circle"></i> Generando el comprobante, espere').delay(15);
+					this.guardar()
+				}
+			},
 			guardar(){
 				let cabecera = { tipo: this.tipoVenta, serie: this.serie, fecha: moment().format('YYYY-MM-DD') }
-				axios.post('../php/insertarBoleta_v4.php', {empresa: this.empresa, cliente: this.clienteActual, cabecera: cabecera, jsonProductos: this.canasta
+				axios.post('../php/insertarBoleta_v4.php', {empresa: this.empresa, cliente: this.clienteActual, cabecera: cabecera, jsonProductos: this.separados
 				})
 				.then((response)=>{ console.log( response.data );
 					let jTicket = response.data;
+					this.limpiarTodo();
 
-					if(app.impresionTicket){
+					/* if(app.impresionTicket){
 						$.ajax({url: "http://127.0.0.1/"+this.empresa.carpeta+"/printComprobante.php", type: 'POST', data: {
 							ticketera: this.empresa.ticketera,
 							tipoComprobante: jTicket[0].tipoComprobante,
@@ -528,18 +609,15 @@
 							productos: jTicket[1],
 							direccion:jTicket[0].direccion,
 							exonerado: parseFloat(jTicket[0].exonerado).toFixed(2),
-							/* placa: jTicket[0].placa, */
+							//placa: jTicket[0].placa,
 						}}).done(function(resp) {
 							console.log(resp)
-							app.limpiarTodo();
 							//location.reload();
 						});
 
 					}else{
 						app.limpiarTodo();
-					}
-
-
+					} */
 				})
 				.catch((error)=>{ console.log( error );});
 			},
@@ -575,8 +653,16 @@
 				this.modoCliente=null;
 				this.idProducto=null;
 				this.preciosEspeciales=[];
-				this.productos=[];
+				this.productosNombre=[];
+				this.productosSerie=[];
 				this.canasta=[];
+				this.separados=[];
+			},
+			siguienteLinea(index){
+				$('#tLineasSerie input').eq(index+1).focus();
+			},
+			limpiarLinea(index){
+				$('#tLineasSerie input').eq(index).val('').focus();
 			}
 		},
 		computed:{
@@ -590,5 +676,49 @@
 		}
 	})
 </script>
+<style>
+	h1,h2,h3,h4,h5{ color:#43484e; }
+	#listadoClientes{ color:darkgrey}
+	#listadoClientes .razon{ font-size: 0.8rem; color: rgb(58 58 58 / 67%); }
+	#listadoClientes .ruc{ font-size: 0.7rem; }
+	#listadoClientes .row:hover, .divProductosVarios .row:hover, #divCanastaProductos .row:hover{ background:rgb(232 232 232 / 89%); cursor:pointer; }
+	.cuadroMouse:hover{ background:#7e39b152; cursor:pointer; }
+	#cuadroCliente .btn{font-size: 0.8rem; border-color: #cacaca;}
+	.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+	#divRegistroCliente input{
+		margin: 0.5rem 0;
+	}
+	.alertify-notifier .ajs-message.ajs-error {
+		background: rgb(239 4 4 / 95%);
+		color: white;
+		border-radius: 2rem;
+	}
+	.alertify-notifier .ajs-message.ajs-warning {
+		background: rgb(255 143 29 / 95%);
+		color: white;
+		border-radius: 2rem;
+	}
+	.alertify-notifier .ajs-message {
+			background: rgb(29 57 255 / 95%);
+			color: white;
+			border-radius: 2rem;
+	}
+	.alertify-notifier .ajs-message{
+		width: 360px!important;
+		right: 390px!important;
+	}
+	#datosEmpresa p{
+    line-height: 1.3;
+	}
+	.close{color: #de1212;opacity: 0.8;}
+</style>
 </body>
 </html>

@@ -4,7 +4,6 @@ include __DIR__ . '/conexion.php';
 include __DIR__ . './../generales.php';
 require __DIR__ . "./../NumeroALetras.php";
 
-var_dump($_POST); die();
 if(isset($_POST['jsonCliente'])){
 
 	$sqlCli="INSERT INTO clientes (cliRuc, cliRazonSocial, cliDomicilio, cliActivo)

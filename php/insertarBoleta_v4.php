@@ -122,17 +122,22 @@ for ($i=0; $i < count($productos) ; $i++) {
 		}
 		
 		$sqlProd = "INSERT INTO `fact_detalle`(`codItem`, `idCabecera`,`facSerieCorre`, `codUnidadMedida`, `cantidadItem`, `codProducto`, `descripcionItem`,
-		`valorUnitario`, `valorExonerado`, `igvUnitario`, `mtoIgvItem`, `valorItem`, `mtoPrecioVenta`, `mtoValorVenta`, `codTriIGV`, `nomTributoIgvItem`, `tipAfeIGV`, `fechaEmision`, `idGravado`, `idProducto`, `porIgvItem`) VALUES
+		`valorUnitario`, `valorExonerado`, `igvUnitario`, `mtoIgvItem`, `valorItem`, `mtoPrecioVenta`, `mtoValorVenta`, `codTriIGV`, `nomTributoIgvItem`, `tipAfeIGV`, `fechaEmision`, `idGravado`, `idProducto`, `porIgvItem`, `serie`) VALUES
 		 (null, {$idCabecera}, concat('{$serie}','-','{$correlativo}'), '{$productos[$i]['unidadSunat']}', {$canti}, {$i}, '{$productos[$i]['nombre']}',
-		 {$costoUnit}, {$exonerado}, {$igvUnit}, {$igvCant}, {$valorUnit},{$subTo},{$valorUnit}, {$codigoIGV}, '{$nomTributo}', {$tipAfecto}, now(), {$productos[$i]['afecto']}, {$productos[$i]['id']}, {$porcentajeIGV});";
-		 $cadena->query($sqlProd);
+		 {$costoUnit}, {$exonerado}, {$igvUnit}, {$igvCant}, {$valorUnit},{$subTo},{$valorUnit}, {$codigoIGV}, '{$nomTributo}', {$tipAfecto}, now(), {$productos[$i]['afecto']}, {$productos[$i]['id']}, {$porcentajeIGV}, '{$productos[$i]['serie']}');";
+		if($productos[$i]['serie']<>'' && $soy=='-1'){
+			$sqlProd.="UPDATE `barras` SET `activo`=0 WHERE `barra`='{$productos[$i]['serie']}' and `idProducto` = {$productos[$i]['id']};";
+		 }
+		 $cadena->multi_query($sqlProd);
 
-		 $_POST['idProd']=$productos[$i]['id'];
-		 $_POST['proceso']='3';
-		 $_POST['cantidad']=$canti;
-		 $_POST['obs']='';
-		 require 'updateStock.php';
-		 
+		 if( $soy=='-1' ){
+			//Solo actualizamos stock si es diferente a proforma
+			 $_POST['idProd']=$productos[$i]['id'];
+			 $_POST['proceso']='3';
+			 $_POST['cantidad']=$canti;
+			 $_POST['obs']='';
+			 require 'updateStock.php';
+		 }
 
 		// echo $sqlProd;
 	}
@@ -193,7 +198,7 @@ while($rowD=$resultadoDetalle->fetch_assoc()){
 	}
 
 
-	$rowProductos[$i] = array( 'cantidad'=>$rowD['cantidadItem'], 'descripcion'=> $rowD['descripcionItem'], 'precio'=> $rowD['mtoPrecioVenta'], 'costo'=> $rowD['valorUnitario'], 'preProducto'=> $precProducto , 'undCorto'=> $rowD['undCorto'] );
+	$rowProductos[$i] = array( 'cantidad'=>$rowD['cantidadItem'], 'descripcion'=> $rowD['descripcionItem'], 'precio'=> $rowD['mtoPrecioVenta'], 'costo'=> $rowD['valorUnitario'], 'preProducto'=> $precProducto , 'undCorto'=> $rowD['undCorto'], 'serie' => $rowD['serie'] );
 	$i++;
 
 	

@@ -49,9 +49,15 @@ while($row=$resultado->fetch_assoc()){
 
 		<td class="tableexport-string">S/ <?= number_format($row['IGVFinal'],2); ?></td>
 		<td class="tableexport-string">S/ <span class="spTotalPac" data-estado="<?= $row['comprobanteEmitido']; ?>"><?= number_format($row['totalFinal'],2); ?></span></td>
-		<td class="text-capitalize">
-			<?php if($row['comprobanteEmitido']==0){ echo "<span class='badge badge-secondary'> <i class='icofont-safety'></i> {$row['comprobanteEmitidoDescr']}</span>"; }
-				else if( in_array($row['comprobanteEmitido'], [2,4]) ){ echo "<span class='badge badge-danger'> <i class='icofont-delete'></i> ".$row['comprobanteEmitidoDescr']."</span> <br><small class='text-danger'>{$row['motivoBaja']}</small>";} 
+		
+		<td><?= ( $row['esContado']=='1' )? 'Contado' : 'Crédito'; ?></td>
+		<td><?= number_format(( $row['esContado']=='1' )? '0' : $row['totalFinal'] - $row['adelanto'], 2); ?> </td>
+		<td class="text-capitalize" >
+			<?php if($row['comprobanteEmitido']==0){ 
+				?><span class='badge badge-secondary'> <i class='icofont-safety'></i> <?= $row['comprobanteEmitidoDescr']?> </span> <?php
+			 }
+				else if( in_array($row['comprobanteEmitido'], [2,4]) ){ ?>
+				<span class='badge badge-danger'> <i class='icofont-delete'></i> <?= $row['comprobanteEmitidoDescr']?></span> <br><small class='text-danger'><?= $row['motivoBaja']?></small> <?php }
 				else if($row['comprobanteEmitido']==3) { echo "<span class='badge badge-success'><i class='icofont-safety'></i> ".$row['comprobanteEmitidoDescr']. "</span>";}
 				else {
 					if($row['factSerie']!=''){
@@ -60,8 +66,6 @@ while($row=$resultado->fetch_assoc()){
 				}
 			?>
 		</td>
-		<td><?= ( $row['esContado']=='1' )? 'Contado' : 'Crédito'; ?></td>
-		<td><?= number_format(( $row['esContado']=='1' )? '0' : $row['totalFinal'] - $row['adelanto'], 2); ?> </td>
 		<?php if(in_array( $row['factTipoDocumento'], $comprobantes)){ ?>
 			<td data-caso="<?= $row['factTipoDocumento']; ?>" data-serie="<?= $row['factSerie']; ?>" data-correlativo="<?= $row['factCorrelativo']; ?>" style="display: flex;">
 				<?php 
@@ -87,6 +91,7 @@ while($row=$resultado->fetch_assoc()){
 				}
 				?>
 			</td>
+			
 		<?php }else{ ?>
 			<td data-caso="<?= $row['factTipoDocumento']; ?>" data-serie="<?= $row['factSerie']; ?>" data-correlativo="<?= $row['factCorrelativo']; ?>" style="white-space: nowrap;">
 				<button class="btn btn-outline-secondary btn-sm border border-light imprTicketFuera" data-toggle="tooltip" data-placement="top" title="Imprimir ticket"><i class="icofont-paper"></i></button>

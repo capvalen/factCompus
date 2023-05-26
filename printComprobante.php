@@ -34,7 +34,7 @@ $qrCode->writeFile(__DIR__.'/qrcode.png');
 $productos=$_POST['productos'];
 $todoProd= '';
 foreach ($productos as $variable) {
-    $todoProd = $todoProd .  ucwords($variable['descripcion'])."\n              ".$variable['cantidad']." ".$variable['undCorto']."   ". "S/ ". number_format($variable['preProducto'],2).'   S/ '. number_format($variable['precio'],2)."\n";
+    $todoProd = $todoProd .  ucwords($variable['descripcion']) . ( $variable['serie']!='' ) ? " SN: {$variable['serie']}" : ''."\n              ".$variable['cantidad']." ".$variable['undCorto']."   ". "S/ ". number_format($variable['preProducto'],2).'   S/ '. number_format($variable['precio'],2)."\n";
 }
 //echo $todoProd;
 if($_POST['queEs']!='PROFORMA' && $_POST['queEs']!="NOTA DE PEDIDO"){ $queEs = $_POST['queEs'] . " ELECTRÓNICA"; }else{ $queEs = $_POST['queEs']; }

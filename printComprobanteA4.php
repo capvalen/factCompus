@@ -96,7 +96,7 @@ QRcode::png($codeContents, $tempDir.''.$filename.'.png', QR_ECLEVEL_L, 5);
 
 <div class="row">
 <div class="col-sm-6 ">
-	<img src="images/empresa.jpg" alt="" class="w-50" >
+	<img src="images/empresa.png" alt="" class="w-50" >
 	
 </div>
 <div class="col-sm-6 mt-5 mb-2 text-center " class="">
@@ -118,11 +118,10 @@ QRcode::png($codeContents, $tempDir.''.$filename.'.png', QR_ECLEVEL_L, 5);
 	<div class="border bordeDelgado p-2 container-fluid">
 	<div class="row p-2">
 		<div class="col-8">
+			<p class="mb-0"><strong>N° Documento:</strong> <?= $rowC['dniRUC']; ?></p>
 			<p class="mb-0"><strong>Señor(es):</strong> <span class="text-capitalize"><?=  $rowC['razonSocial']; ?></span> </p>
 			<p class="text-capitalize mb-0"><strong>Domicilio:</strong> <?= ($rowC['cliDireccion'] =='') ? '-' : $rowC['cliDireccion']; ?></p>
-			<p class="mb-0"><strong>N° Documento:</strong> <?= $rowC['dniRUC']; ?></p>
 			<p class="mb-0"><strong>Tipo pago:</strong> <?= ($rowC['esContado']==1)? 'Contado':'Crédito'; ?></p>
-			
 		</div>
 		<div class="col">
 		<br>
@@ -172,7 +171,7 @@ while($rowD=$resultadoDetalle->fetch_assoc()){
 	?>
 	<tr>
 		<td class="p-1"><?= $i;?></td>
-		<td class="p-1" class="text-capitalize"><?= $rowD['descripcionItem']; ?></td>
+		<td class="p-1 text-capitalize"><?= $rowD['descripcionItem']; ?> <?= ($rowD['serie']<>'') ? "(SN: {$rowD['serie']})": ''?></td>
 		<td class="p-1"><?= $rowD['undCorto']?></td>
 		<td class="p-1"><?= $rowD['cantidadItem']; ?></td>
 		<td class="p-1"><?= $precProducto; ?></td>
@@ -227,7 +226,7 @@ while($rowD=$resultadoDetalle->fetch_assoc()){
 </div>
 <div class="row">
 	<div class="col">
-		<p class="small">Puede ser consultada en: https://grupoeuroandino.com/facturas/ <br/>Visible en Sunat a partir de las 24 horas de la emisión mediante Resolución de Superintendencia N° 0150-2021/SUNAT. </p>
+		<p class="small">Puede ser consultada en: https://grupotecnologicoperu..com/facturas/ <br/>Visible en Sunat a partir de las 24 horas de la emisión mediante Resolución de Superintendencia N° 0150-2021/SUNAT. </p>
 	</div>
 </div>
 </section>

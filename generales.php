@@ -4,10 +4,10 @@ $dirBaseSunat = 'D:\Fac_Casabarro_1.3.4.4\sunat_archivos\sfs';
 $directorio = $dirBaseSunat. '\DATA/';
 $dirRespuestas = $dirBaseSunat. '\RPTA/';
 
-$rucEmisor ='20568390629';
-$nombreEmisor = "GRUPO EURO ANDINO S.A.C.";
-$direccionEmisor = "Cal. Independencia N° 415 - El Tambo - Huancayo - Junín";
-$celularEmisor = "947614293";
+$rucEmisor ='20568763832';
+$nombreEmisor = "GRUPO TECNOLOGICO C & C S.A.C.";
+$direccionEmisor = "Dirección: Av. Giraldez 2do Nivel Oficina 204 - Huancayo - Junín";
+$celularEmisor = "930171567";
 $nombrePrint = 'CAJA'; //TM-T20II
 
 $casaHost = "pluginSunat";
@@ -35,7 +35,7 @@ $tipoTributo='1000';
 $nombreTributo = 'IGV';
 $tributoExtranjero = 'VAT';
 $afectacion = '10';
-$porcentajeIGV = $_COOKIE['igvGlobal'];
+$porcentajeIGV = $_COOKIE["igvGlobal"];
 $porcentajeIGV1 = 1+($porcentajeIGV)/100;
 $tributoISC = '-';
 $codigoISC = '0.00';
