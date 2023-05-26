@@ -152,7 +152,7 @@
 			
 				<p class="mb-1"><i class="bi bi-upc-scan"></i> Escanee o haga una búsqueda:</p>
 
-				<input type="text" class="form-control" placeholder="Código, descripción, barras" id="txtBusquedaProducto" v-on:keyup.enter="buscarProducto()" v-model="prodBuscar">
+				<input type="text" class="form-control" placeholder="Descripción o código de barras" id="txtBusquedaProducto" v-on:keyup.enter="buscarProducto()" v-model="prodBuscar">
 
 				<div class="row" v-if="productos.length >0">
 					<div class="col"><p class="my-2"><small><strong>Coincidencias</strong></small></p></div>
@@ -161,8 +161,8 @@
 				<div id="divProductosVarios" v-if="productos.length >0">
 					<div class="row py-2 border-bottom noselect" v-for="(busqueda, item) in productos" @click="llenarProductos(item)">
 						<div class="col "><small>{{item+1}}. {{busqueda.prodDescripcion}}</small></div> 
-						<div class="col-2 text-secondary"><small><strong>{{busqueda.prodStock}}</strong></small></div> 
-						<div class="col-2 text-secondary"><small><strong>{{parseFloat(busqueda.prodPrecio).toFixed(2)}}</strong></small></div> 
+						<div class="col-2 text-secondary"><small><strong>{{busqueda.prodStock}} unds.</strong></small></div> 
+						<div class="col-2 text-secondary"><small><strong>S/ {{parseFloat(busqueda.prodPrecio).toFixed(2)}}</strong></small></div> 
 						<div class="col-1 d-flex justify-content-center"><i class="bi bi-box-arrow-right"></i></div>
 					</div>
 
@@ -171,7 +171,7 @@
 			</div>
 			<div class="col-md-4 p-3">
 				
-				<center><img :src="'../'+empresa.logo" alt="" class="img-fluid w-50"></center>
+				<center><img :src="'../'+empresa.logo" alt="" style="max-width: 40%;"></center>
 				<div id="canastaProductos">
 					<p class="text-center mb-1"><strong>{{venta}}</strong></p>
 
@@ -204,8 +204,10 @@
 					<div class='modal-body'>
 						<button type='button' class='close' data-dismiss='modal' aria-label='Close'> <span aria-hidden='true'>&times;</span></button>
 						
-						<p class="mt-4 mb-2">Estas editando: <strong id="queEdito"></strong></p>
+						<p class="mt-4 mb-2">Estas editando: <strong class="text-capitalize" id="queEdito"></strong></p>
 						<p>Precio: S/ <span id="txtPrecioProducto"></span></p>
+						<label for="">Cantidad</label>
+						<input type="text" class="form-control" v-if="canasta.length>0" v-model="canasta[idProducto].cantidad" >
 						
 						<div >
 							<select name="" id="sltPreciosEspeciales" class="form-control" @change="precioDe">
@@ -242,7 +244,7 @@
 				cliRuc: '00000000'
 			}],
 			clienteActual:{dni: '00000000', razon: 'Cliente simple', idCliente:1, tipo:'persona', direccion:''},
-			modoCliente:null, idProducto:null, preciosEspeciales:[],
+			modoCliente:null, idProducto:-1, preciosEspeciales:[],
 			productos:[],
 			canasta:[],
 			impresionTicket:true
@@ -430,6 +432,11 @@
 				if(this.canasta[item].cantidad>1){
 					this.canasta[item].cantidad -= 1;
 					this.canasta[item].subTotal =this.canasta[item].cantidad * this.canasta[item].precio ;
+				}
+				if(this.canasta[item].cantidad==1){
+					if(confirm(`¿Desea borrar el item?`)){
+						this.canasta.splice(item, 1)
+					}
 				}
 			},
 			cambiarTipoVenta(){

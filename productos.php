@@ -24,58 +24,13 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 
 </head>
 <body>
-<style>
-.bg-dark {
-	background-color: #7030a0!important;
-}
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-    /* display: none; <- Crashes Chrome on hover */
-    -webkit-appearance: none;
-    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
-}
-input[type=number] {
-    -moz-appearance:textfield; /* Firefox */
-}
-.bootstrap-select .dropdown-toggle .filter-option{font-family:'Icofont', 'Segoe UI';}
-.close{color: #ff0202}
-.close:hover, .close:not(:disabled):not(.disabled):hover{color: #fd0000;opacity:1;}
-#imgLogo{max-width:250px;}
-.bootstrap-select .btn-light{background-color: #ffffff;}
-.bootstrap-select .dropdown-toggle .filter-option{    border: 1px solid #ced4da;
-    border-radius: .25rem;}
-thead tr th{cursor: pointer;}
-.dropdown-item .text, .bootstrap-select button{text-transform: capitalize;}
-.alertify-notifier .ajs-message.ajs-error {
-	background: rgb(239 4 4 / 95%);
-	color: white;
-	border-radius: 2rem;
-}
-.alertify-notifier .ajs-message.ajs-warning {
-	background: rgb(255 143 29 / 95%);
-	color: white;
-	border-radius: 2rem;
-}
-.alertify-notifier .ajs-message {
-    background: rgb(29 57 255 / 95%);
-    color: white;
-    border-radius: 2rem;
-}
-.alertify-notifier.ajs-right{
-}
-.alertify-notifier .ajs-message{
-	width: 360px!important;
-	right: 390px!important;
-}
-</style>
-
 <?php include 'menu-wrapper.php'; ?>
 
 <section>
 	<div class="container-fluid mt-5 px-5">
 		<div class="row">
-		<div class="col-md-3">
-			<img src="<?= $_COOKIE['logo']?>" class='img-fluid mt-3'>
+		<div class="col-md-3 text-center">
+			<img src="<?= $_COOKIE['logo']?>" style='max-width: 30%'>
 		</div>
 		<div class="col ml-4">
 			<h3 class="display-4">Gestión de productos</h3>
@@ -139,12 +94,53 @@ thead tr th{cursor: pointer;}
       <div class="modal-body">
 				<div class="form-group row">
 					<label for="txtDescripcionNuevo" class="col-sm-4 col-form-label"><span class="text-danger">*</span> Descripción:</label>
-					<div class="col-sm-8"> <input type="text" class="form-control text-capitalize" id="txtDescripcionNuevo" > </div>
+					<div class="col-sm-8"> <input type="text" class="form-control text-capitalize" id="txtDescripcionNuevo" autocomplete="off" > </div>
 				</div>
 				<div class="form-group row">
 					<label for="txtCodeSunat" class="col-sm-4 col-form-label">Código Sunat:</label>
-					<div class="col-sm-8"> <input type="text" class="form-control text-capitalize" id="txtCodeSunat" > </div>
+					<div class="col-sm-8"> <input type="text" class="form-control text-capitalize" id="txtCodeSunat" autocomplete="off" > </div>
 				</div>
+				<div class="form-group row">
+					<label for="txtCodeSunat" class="col-sm-4 col-form-label">¿Maneja series?:</label>
+					<div class="col-sm-8"> 
+						<select class="form-control" id="sltSeries">
+							<option value="2" selected>No</option>
+							<option value="1">Si</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="txtCodeSunat" class="col-sm-4 col-form-label">Marca:</label>
+					<div class="col-sm-8"> 
+						<select class="form-control" id="sltMarcas">
+							<?php include('php/optionMarcas.php'); ?>
+						</select>
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="txtCodeSunat" class="col-sm-4 col-form-label">Linea:</label>
+					<div class="col-sm-8"> 
+						<select class="form-control" id="sltLineas">
+							<?php include('php/optionLineas.php'); ?>
+						</select>
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="txtCodeSunat" class="col-sm-4 col-form-label">Familia:</label>
+					<div class="col-sm-8"> 
+						<select class="form-control" id="sltFamilias" onchange="cambiarFamilia()">
+							<?php include('php/optionFamilias.php'); ?>
+						</select>
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="txtCodeSunat" class="col-sm-4 col-form-label">Sub-Familia:</label>
+					<div class="col-sm-8"> 
+						<select class="form-control" id="sltSubFamilias">
+						</select>
+					</div>
+				</div>
+
 				<div class="form-group row <?= ( $_COOKIE['precioPublico']==1 ? '': 'd-none' )?>">
 					<label for="txtPrecioNuevo" class="col-sm-4 col-form-label"><span class="text-danger">*</span> Precio al Público:</label>
 					<div class="col-sm-6"> <input type="number" class="form-control esMoneda text-center" id="txtPrecioNuevo" value="0.00"> </div>
@@ -283,7 +279,7 @@ thead tr th{cursor: pointer;}
 				<div class="card mt-2">
 					<div class="card-body p-3">
 						<div class="input-group mb-3">
-							<input type="text" class="form-control" placeholder="Escanee el código" id="txtCodigoBarrita">
+							<input type="text" class="form-control" placeholder="Escanee el código" id="txtCodigoBarrita" autocomplete="off">
 							<div class="input-group-append">
 								<button class="btn btn-outline-primary" id="btnAddBarrita" type="button" id="button-addon2"><i class="icofont-plus"></i></button>
 							</div>
@@ -291,7 +287,7 @@ thead tr th{cursor: pointer;}
 					</div>
 				</div>
 				<p class="mt-3"><strong>Códigos de barras asociados:</strong></p>
-				<table class="table table-hover">
+				<table class="table table-hover table-sm">
 					<thead>
 						<tr>
 							<th>N°</th>
@@ -321,6 +317,8 @@ thead tr th{cursor: pointer;}
 <script src="js/alertify.min.js"></script>
 
 <script>
+var subfamilias=null;
+
 $(document).ready(function(){
 	$('.selectpicker').selectpicker('render');
 	$('.selectpicker').selectpicker('val', -1);
@@ -332,7 +330,13 @@ $(document).ready(function(){
 	}); */
 	//$("table").stupidtable();
 	$('[data-toggle="tooltip"]').tooltip();
-
+	fetch('php/optionFamiliasSub.php',{
+		method:'POST'
+	}).then(res=> res.json())
+	.then(data => {
+		subfamilias = data
+		cambiarFamilia();
+	})
 });
 
 $('#txtProductoBuscar').keypress(function (e) { 
@@ -408,7 +412,9 @@ $('#btnNuevoProduct').click(function() {
 	if( $('#txtDescripcionNuevo').val()=='' || $('#txtPrecioNuevo').val()=='' || $('#sltFiltroGravadoNuevo').selectpicker('val')==null || $('#sltFiltroUnidadesNuevo').val()==null  ){
 		$('#modalNuevoProducto .text-danger').removeClass('d-none').html('<i class="icofont-cat-alt-3"></i> Debe rellenar todos los campos olbigatorios');
 	}else{
-		$.ajax({url: 'php/insertarProducto.php', type: 'POST', data: {nombre: $('#txtDescripcionNuevo').val(), precio: $('#txtPrecioNuevo').val(), mayor: $('#txtPrecioMayorNuevo').val(), descuento: $('#txtPrecioDescuentoNuevo').val(), gravado: $('#sltFiltroGravadoNuevo').selectpicker('val'), unidad: $('#sltFiltroUnidadesNuevo').selectpicker('val'), codeSunat: $('#txtCodeSunat').val() }}).done(function(resp) {
+		$.ajax({url: 'php/insertarProducto.php', type: 'POST', data: {nombre: $('#txtDescripcionNuevo').val(), precio: $('#txtPrecioNuevo').val(), mayor: $('#txtPrecioMayorNuevo').val(), descuento: $('#txtPrecioDescuentoNuevo').val(), gravado: $('#sltFiltroGravadoNuevo').selectpicker('val'), unidad: $('#sltFiltroUnidadesNuevo').selectpicker('val'), codeSunat: $('#txtCodeSunat').val(),
+			series: $('#sltSeries').val(), marca: $('#sltMarcas').val(), linea: $('#sltLineas').val(), familia: $('#sltFamilias').val(), subfamilia: $('#sltSubFamilias').val(), 
+		 }}).done(function(resp) {
 			//console.log(resp)
 			if( resp =='ok'){
 				$('#h5Detalle').text('Producto guardado');
@@ -506,6 +512,16 @@ $('#btnExportarProductos').click(function() {
 	//exportTableToExcel('tlbProductosTodos', 'archivos')
 	Exportar()
 });
+function cambiarFamilia(){
+	let subFamilia = document.getElementById('sltSubFamilias');
+	subFamilia.innerHTML='<option selected value="-1">NINGUNO</option>';
+	let id = document.getElementById('sltFamilias').value;
+	subfamilias.forEach(familia => {
+		if(familia.idFamilia == id){
+			subFamilia.innerHTML+=`<option value="${familia.id}">${familia.subfamilia}</option>`
+		}
+	});
+}
 function Exportar(){
 	var uri = 'data:application/vnd.ms-excel;base64,'
 	, template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><meta http-equiv="content-type" content="application/vnd.ms-excel; charset=UTF-8"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
@@ -525,6 +541,49 @@ function Exportar(){
 }
 
 </script>
-
+<style>
+	.bg-dark {
+		background-color: #7030a0!important;
+	}
+	input::-webkit-outer-spin-button,
+	input::-webkit-inner-spin-button {
+			/* display: none; <- Crashes Chrome on hover */
+			-webkit-appearance: none;
+			margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+	}
+	input[type=number] {
+			-moz-appearance:textfield; /* Firefox */
+	}
+	.bootstrap-select .dropdown-toggle .filter-option{font-family:'Icofont', 'Segoe UI';}
+	.close{color: #ff0202}
+	.close:hover, .close:not(:disabled):not(.disabled):hover{color: #fd0000;opacity:1;}
+	#imgLogo{max-width:250px;}
+	.bootstrap-select .btn-light{background-color: #ffffff;}
+	.bootstrap-select .dropdown-toggle .filter-option{    border: 1px solid #ced4da;
+			border-radius: .25rem;}
+	thead tr th{cursor: pointer;}
+	.dropdown-item .text, .bootstrap-select button{text-transform: capitalize;}
+	.alertify-notifier .ajs-message.ajs-error {
+		background: rgb(239 4 4 / 95%);
+		color: white;
+		border-radius: 2rem;
+	}
+	.alertify-notifier .ajs-message.ajs-warning {
+		background: rgb(255 143 29 / 95%);
+		color: white;
+		border-radius: 2rem;
+	}
+	.alertify-notifier .ajs-message {
+			background: rgb(29 57 255 / 95%);
+			color: white;
+			border-radius: 2rem;
+	}
+	.alertify-notifier.ajs-right{
+	}
+	.alertify-notifier .ajs-message{
+		width: 360px!important;
+		right: 390px!important;
+	}
+</style>
 </body>
 </html>

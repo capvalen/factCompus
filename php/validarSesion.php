@@ -20,18 +20,18 @@ if ($row['idUsuario']>=1){
 	// $_SESSION['oficina']=$_POST['offi'];
 	if( $row['usuActivo']=='1' ){
 		
-		setcookie('ckAtiende', $row['usuNombres'], '', $local);
-		setcookie('cknomCompleto', $row['usuNombres'].', '.$row['usuApellido'], '', $local);
-		setcookie('ckPower', $row['usuPoder'], '', $local);
-		setcookie('ckidUsuario', $row['idUsuario'], '', $local);
-		setcookie('ckUsuario', $row['usuNick'], '', $local);
+		setcookie('ckAtiende', $row['usuNombres'], 0, $local);
+		setcookie('cknomCompleto', $row['usuNombres'].', '.$row['usuApellido'], 0, $local);
+		setcookie('ckPower', $row['usuPoder'], 0, $local);
+		setcookie('ckidUsuario', $row['idUsuario'], 0, $local);
+		setcookie('ckUsuario', $row['usuNick'], 0, $local);
 		
 	
 
 		$sqlConf = "SELECT `idConf`, `confVariable`, `confValor` FROM `configuracion` where 1;";
 		$resultadoConf=$esclavo->query($sqlConf);
 		while($rowConf=$resultadoConf->fetch_assoc()){ 
-			setcookie($rowConf['confVariable'], $rowConf['confValor'], '', $local);
+			setcookie($rowConf['confVariable'], $rowConf['confValor'], 0, $local);
 		}
 
 		include "datosEmpresa_priv.php";
