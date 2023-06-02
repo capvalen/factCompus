@@ -3,7 +3,9 @@
 include "conexion.php";
 $_POST = json_decode(file_get_contents('php://input'),true); 
 
-$sql="SELECT * FROM `productos` p
+$sql="SELECT p.*, m.marca, l.linea FROM `productos` p
+inner join marcas m on m.id = p.idMarca
+inner join lineas l on l.id = p.idLinea
 where prodDescripcion like concat('%' , '{$_POST['texto']}' , '%') and prodActivo=1 ;";
 
 $resultado=$cadena->query($sql);
@@ -12,7 +14,9 @@ $productos=array(); $serie=array();
 while($row=$resultado->fetch_assoc()){ 
 	$productos[]=$row;
 }
-$sqlBarras="SELECT p.*, b.barra FROM `productos` p
+$sqlBarras="SELECT p.*, b.barra, m.marca, l.linea FROM `productos` p
+inner join marcas m on m.id = p.idMarca
+inner join lineas l on l.id = p.idLinea
 inner join barras b on b.idProducto = p.idProductos
 where b.barra = '{$_POST['texto']}' and b.activo = 1";
 

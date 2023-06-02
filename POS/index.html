@@ -217,7 +217,7 @@
 						</table>
 						
 						<div class='d-flex justify-content-end mt-3'>
-							<button type='button' class='btn btn-outline-primary btn-sm' data-dismiss="modal" @click="guardar()"><i class="bi bi-arrow-down-up"></i> Emitir Comprobante</button>
+							<button type='button' class='btn btn-outline-primary btn-sm' data-dismiss="modal" @click="guardar()"><i class="bi bi-paper"></i> Emitir Comprobante</button>
 						</div>
 					</div>
 				</div>
@@ -572,7 +572,7 @@
 						vacios++
 					}
 				});
-				console.log('vacios',vacios);
+				//console.log('vacios',vacios);
 				if(vacios>0){
 					$('#modalRellenarSeries').modal('show');
 				}else{
@@ -659,7 +659,7 @@
 				this.separados=[];
 			},
 			siguienteLinea(index){
-				$('#tLineasSerie input').eq(index+1).focus();
+				$('#tLineasSerie tr').eq(index+1).find('input').focus();
 			},
 			limpiarLinea(index){
 				$('#tLineasSerie input').eq(index).val('').focus();
