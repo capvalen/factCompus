@@ -12,7 +12,7 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title>Facturador electrónico</title>
+	<title>Productos - Facturador electrónico</title>
 	<link rel="stylesheet" href="css/bootstrap.min.css" integrity="" crossorigin="anonymous">
 	<link rel="stylesheet" href="icofont.min.css">
 	<link rel="stylesheet" href="css/bootstrap-select.min.css">
@@ -51,23 +51,23 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 			</div>
 		</div>
 
-		<div class="table-responsive">
-			<table class="table table-hover mt-3" id="tlbProductosTodos">
-				<thead>
+		<div class="table-responsive" style="overflow: auto;">
+			<table class="table table-hover table-sm mt-3" id="tlbProductosTodos" >
+				<thead style="position: sticky;top: 0">
 					<tr>
-						<th data-sort="int"><i class="icofont-expand-alt"></i> N°</th>
-						<th data-sort="string"><i class="icofont-expand-alt"></i> Nombre de producto</th>
-						<th data-sort="float"><i class="icofont-expand-alt"></i> Precio Público</th>
-						<th data-sort="float"><i class="icofont-expand-alt"></i> Precio por Mayor</th>
-						<th data-sort="float"><i class="icofont-expand-alt"></i> Precio con Dscto.</th>
-						<th data-sort="int"><i class="icofont-expand-alt"></i> Stock</th>
+						<th class="header" scope="col" data-sort="int"><i class="icofont-expand-alt"></i> N°</th>
+						<th class="header" scope="col" data-sort="string"><i class="icofont-expand-alt"></i> Nombre de producto</th>
+						<th class="header" scope="col" data-sort="float"><i class="icofont-expand-alt"></i> Precio Público</th>
+						<th class="header" scope="col" data-sort="float"><i class="icofont-expand-alt"></i> Precio por Mayor</th>
+						<th class="header" scope="col" data-sort="float"><i class="icofont-expand-alt"></i> Precio con Dscto.</th>
+						<th class="header" scope="col" data-sort="int"><i class="icofont-expand-alt"></i> Stock</th>
 						<?php if($_COOKIE['facCambiarGravado']==1){ ?>
-						<th data-sort="string"><i class="icofont-expand-alt"></i> Gravado</th>
+						<th  class="header" scope="col" data-sort="string"><i class="icofont-expand-alt"></i> Gravado</th>
 						<?php } ?>
 						<?php if($_COOKIE['facCambiarUnidad']==1){ ?>
-						<th data-sort="string"><i class="icofont-expand-alt"></i> Unidad</th>
+						<th class="header" scope="col" data-sort="string"><i class="icofont-expand-alt"></i> Unidad</th>
 						<?php } ?>
-						<th data-sort="string"><i class="icofont-expand-alt"></i> Estado</th>
+						<!-- <th data-sort="string"><i class="icofont-expand-alt"></i> Estado</th> -->
 						<th>@</th>
 					</tr>
 				</thead>
@@ -104,7 +104,7 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 					<label for="txtCodeSunat" class="col-sm-4 col-form-label">¿Maneja series?:</label>
 					<div class="col-sm-8"> 
 						<select class="form-control" id="sltSeries">
-							<option value="2" selected>No</option>
+							<option value="0" selected>No</option>
 							<option value="1">Si</option>
 						</select>
 					</div>
@@ -193,6 +193,15 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 				<div class="form-group row">
 					<label for="txtPrecioPublico" class="col-sm-4 col-form-label">Descripción:</label>
 					<div class="col-sm-8"> <input type="text" class="form-control text-capitalize" id="txtDescripcionPub" > </div>
+				</div>
+				<div class="form-group row">
+					<label for="txtPrecioPublico" class="col-sm-4 col-form-label">¿Maneja series?</label>
+					<div class="col-sm-8"> 
+						<select class="form-control" id="sltSeriesMod">
+							<option value="1">Si</option>
+							<option value="0">No</option>
+						</select>
+					</div>
 				</div>
 				<div class="form-group row">
 					<label for="txtPrecioPublico" class="col-sm-4 col-form-label">Precio al Público:</label>
@@ -351,8 +360,9 @@ $('#txtProductoBuscar').keypress(function (e) {
 $('table').on('click', '.btnEditProducto', function (e) {
 	var padre=$(this).parent().parent();
 
-	$('#spanNomProducto').text( padre.find('.tdProdNombre').text());
-	$('#txtDescripcionPub').val(padre.find('.tdProdNombre').text());
+	$('#spanNomProducto').text( $.trim(padre.find('.tdProdNombre').text()));
+	$('#txtDescripcionPub').val( $.trim(padre.find('.tdProdNombre').text()) );
+	$('#sltSeriesMod').val( padre.attr('data-series'));
 
 	$('#txtPrecioPublico').val( parseFloat(padre.find('.tdPublico').attr('data-value')).toFixed(2) );
 	$('#txtPrecioMayor').val( parseFloat(padre.find('.tdMayor').attr('data-value')).toFixed(2) );
@@ -384,7 +394,7 @@ $('#btnUpdateProduct').click(function() {
 	if( $('#txtPrecioMayor').val()!='' ){ pMayor=$('#txtPrecioMayor').val(); }
 	if( $('#txtPrecioDescuento').val()!='' ){ pDescuento=$('#txtPrecioDescuento').val(); }
 
-	$.ajax({url: 'php/updateProducto.php', type: 'POST', data: { idProd: $('#btnUpdateProduct').attr('data-id'), pNombre: $('#txtDescripcionPub').val(), pPublico: pPublico, pMayor: pMayor, pDescuento: pDescuento, pImpuesto: $('#sltFiltroGravado').selectpicker('val'), pUnidad: $('#sltFiltroUnidades').selectpicker('val') }}).done(function(resp) { console.log( resp );
+	$.ajax({url: 'php/updateProducto.php', type: 'POST', data: { idProd: $('#btnUpdateProduct').attr('data-id'), pNombre: $('#txtDescripcionPub').val(), pPublico: pPublico, pMayor: pMayor, pDescuento: pDescuento, pImpuesto: $('#sltFiltroGravado').selectpicker('val'), pUnidad: $('#sltFiltroUnidades').selectpicker('val'), pSeries: $('#sltSeriesMod').val() }}).done(function(resp) { console.log( resp );
 		if(resp=='ok'){
 			$('#h5Detalle').text('Producto Actualizado');
 			$('#modalEditarProducto').modal('hide');
@@ -427,13 +437,15 @@ $('#btnNuevoProduct').click(function() {
 
 });
 $('table').on('click', '.btnBorrarProducto', function (e) {
-	var idProd = $(this).parent().parent().attr('data-id');
-	$.ajax({url: 'php/borrarProducto.php', type: 'POST', data: {idProd:idProd }}).done(function(resp) {
-		if( resp =='ok'){
-			$('#h5Detalle').text('Producto borrado');
-			$('#modalGuardadoExitoso').modal('show');
-		}
-	});
+	if(confirm('¿Deseas borrar el producto?')){
+		var idProd = $(this).parent().parent().attr('data-id');
+		$.ajax({url: 'php/borrarProducto.php', type: 'POST', data: {idProd:idProd }}).done(function(resp) {
+			if( resp =='ok'){
+				$('#h5Detalle').text('Producto borrado');
+				$('#modalGuardadoExitoso').modal('show');
+			}
+		});
+	}
 });
 $('table').on('click', '.btnStockProducto', function (e) {
 	var idProd = $(this).parent().parent().attr('data-id');
@@ -583,6 +595,10 @@ function Exportar(){
 	.alertify-notifier .ajs-message{
 		width: 360px!important;
 		right: 390px!important;
+	}
+	.header{
+		position:sticky!important;
+		top: 0 !important;
 	}
 </style>
 </body>

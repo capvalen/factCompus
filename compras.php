@@ -69,7 +69,7 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 					<div class="col-12 col-md-3">
 						<label for="">Proveedor</label>
 						<select class="form-control" v-model="cabecera.proveedor">
-							<option value="1">Varios</option>
+							<option v-for="provider in proveedores" :value="provider.id">{{provider.razon}}</option>
 						</select>
 					</div>
 					<div class="col-12 col-md-3">
@@ -222,12 +222,20 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
       return {
 				texto:'',
         comprobantes: ['Boleta de Venta', 'Factura', 'Cheque', 'Cotización', 'Guía de remisión', 'Letra', 'Liquidación', 'Nota de débido', 'Nota de crédito', 'Nota de pedido', 'Orden de traslado',  'Otros','Producción', 'Proforma', 'Recibo', 'Reporte diario', 'Ticket' , 'Voucher' ],
-				cabecera:{correlativo: '000-0001', fecha: moment().format('YYYY-MM-DD'), bultos:1, observaciones:'', origen:1, comprobante:1, proveedor:1
+				cabecera:{correlativo: '000-0001', fecha: moment().format('YYYY-MM-DD'), bultos:1, observaciones:'', origen:1, comprobante:1, proveedor:6
 				 }, productosNombre:[], productosSerie:[],
-				cesta:[], separados:[]
+				cesta:[], separados:[], proveedores:[]
       }
     },
+		mounted(){
+			this.getDatos()
+		},
 		methods:{
+			async getDatos(){
+				await fetch('php/listarTodosProveedores.php', {method:'POST'})
+				.then(res=> res.json())
+				.then(datos => this.proveedores = datos)
+			},
 			buscarProducto(){
 				if(this.texto){
 					axios.post('php/buscarProducto.php', {texto: this.texto})
@@ -265,7 +273,9 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 					this.cesta.forEach(prod=>{ console.log(prod);
 						if( prod.cantidad==1 ){
 							this.separados.push(prod)
-							if (prod.series=='') vacios++
+							this.separados[this.separados.length-1].pideSerie= prod.series;
+							this.separados[this.separados.length-1].series= '';
+							if (prod.series=='' || prod.series=='1') vacios++
 						}else{
 							if( prod.series=='0' ){
 								this.separados.push(prod)

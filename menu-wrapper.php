@@ -28,14 +28,15 @@ $nomArchivo = basename($_SERVER['PHP_SELF']); ?>
 		<?php } ?>
 		<?php if($_COOKIE['ckPower']=='1' ): ?>
 			<li class="nav-item dropdown <?php if($nomArchivo =='productos.php' || $nomArchivo =='compras.php') echo 'active'; ?>">
-				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<a class="nav-link dropdown-toggle" href="#!" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<i class="icofont-newspaper"></i> Configuraciones
 				</a>
 				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
     		  <!-- <a class="dropdown-item" href="#!" id="btnModificarSerie"><i class="icofont-tag"></i> Modificar serie</a> -->
 					<!-- <a class="dropdown-item" href="compras.php" target="_blank"><i class="icofont-sale-discount"></i> Compras</a> -->
 					<a class="dropdown-item" href="compras.php" id=""><i class="icofont-paper"></i> Nueva Compra</a>
-					<a class="dropdown-item" href="productos.php" id=""><i class="icofont-hotel"></i> Productos</a>
+					<a class="dropdown-item" href="productos.php" id=""><i class="icofont-grocery"></i> Productos</a>
+					<a class="dropdown-item" href="proveedores.php" id=""><i class="icofont-group"></i> Proveedores</a>
 					<a class="dropdown-item d-none" href="#!" id="btnModificarPrecios"><i class="icofont-infinite"></i> Modificar precios</a>
 					<a class="dropdown-item " href="#!" id="btnModificarUsuarios"><i class="icofont-group"></i> Usuarios</a>
 					<a class="dropdown-item " href="#!" id="btnVaciarBandeja"><i class="icofont-infinite"></i> Vaciar bandeja</a>
@@ -44,8 +45,16 @@ $nomArchivo = basename($_SERVER['PHP_SELF']); ?>
 					<?php endif; ?>
 				</div>
 			</li>
+			<li class="nav-item dropdown <?php if( in_array($nomArchivo, ['reportes.php', 'garantias.php']) ) echo 'active'; ?>">
+				<a class="nav-link dropdown-toggle" href="#!" id="navbarReportes" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<i class="icofont-paper"></i> Reportes
+				</a>
+				<div class="dropdown-menu" aria-labelledby="navbarReportes">
+					<a class="dropdown-item " href="garantias.php" id=""><i class="icofont-paper"></i> Garantias</a>
+					<a class="dropdown-item " href="reportes.php" id=""><i class="icofont-paper"></i> Reportes contables</a>
+				</div>
+			</li>
 			
-			<a class="nav-item nav-link <?php if($nomArchivo =='reportes.php') echo 'active'; ?>" href="reportes.php" id=""><i class="icofont-group"></i> Reportes</a>
     
 		<?php endif; ?>
       <a class="nav-item nav-link " href="desconectar.php"><i class="icofont-addons"></i> Salir del sistema</a>

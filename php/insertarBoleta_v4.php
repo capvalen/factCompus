@@ -85,11 +85,11 @@ if($filasCorrelativo==0){
 $sql="INSERT INTO `fact_cabecera`(`idComprobante`, `factTipoDocumento`, `factSerie`, `factCorrelativo`, `fechaEmision`, `horaEmision`, `tipDocUsuario`,
  `dniRUC`, `razonSocial`,
  `factExonerados`, `costoFinal`, `IGVFinal`, `totalFinal`,`sumImpVenta`, `mtoBaseImponible`, `mtoTributo`, `desLeyenda`,
-  `comprobanteEmitido`, `comprobanteFechado`, `cliDireccion`, `factPlaca`) 
+  `comprobanteEmitido`, `comprobanteFechado`, `cliDireccion`, `factPlaca`, idTicket) 
 VALUES (null,{$_POST['cabecera']['tipo']},'{$serie}','{$correlativo}',{$fecha}, curtime(),{$tipoDoc},
 	'{$_POST['cliente']['dni']}', '{$_POST['cliente']['razon']}',
 	{$exonerados}, {$baseTotal}, {$igvTotal}, {$sumaTotal}, {$sumaTotal}, {$baseTotal}, {$igvTotal}, '{$letras}',
-	1,now(), '{$_POST['cliente']['direccion']}', '' );";
+	1,now(), '{$_POST['cliente']['direccion']}', '', {$_POST['cabecera']['tipo']} );";
 	//echo $sql;
 
 $factura =  $serie.'-'.$correlativo;
@@ -125,12 +125,12 @@ for ($i=0; $i < count($productos) ; $i++) {
 		`valorUnitario`, `valorExonerado`, `igvUnitario`, `mtoIgvItem`, `valorItem`, `mtoPrecioVenta`, `mtoValorVenta`, `codTriIGV`, `nomTributoIgvItem`, `tipAfeIGV`, `fechaEmision`, `idGravado`, `idProducto`, `porIgvItem`, `serie`) VALUES
 		 (null, {$idCabecera}, concat('{$serie}','-','{$correlativo}'), '{$productos[$i]['unidadSunat']}', {$canti}, {$i}, '{$productos[$i]['nombre']}',
 		 {$costoUnit}, {$exonerado}, {$igvUnit}, {$igvCant}, {$valorUnit},{$subTo},{$valorUnit}, {$codigoIGV}, '{$nomTributo}', {$tipAfecto}, now(), {$productos[$i]['afecto']}, {$productos[$i]['id']}, {$porcentajeIGV}, '{$productos[$i]['serie']}');";
-		if($productos[$i]['serie']<>'' && $soy=='-1'){
-			$sqlProd.="UPDATE `barras` SET `activo`=0 WHERE `barra`='{$productos[$i]['serie']}' and `idProducto` = {$productos[$i]['id']};";
-		 }
-		 $cadena->multi_query($sqlProd);
+		 $cadena->query($sqlProd);
 
-		 if( $soy=='-1' ){
+		if( $soy<>'-1' ){ //$productos[$i]['serie']<>''
+			$sqlSerie="UPDATE `barras` SET `activo`=0 WHERE `barra`='{$productos[$i]['serie']}' ;"; // and `idProducto` = {$productos[$i]['id']}
+			$esclavo->query($sqlSerie);
+
 			//Solo actualizamos stock si es diferente a proforma
 			 $_POST['idProd']=$productos[$i]['id'];
 			 $_POST['proceso']='3';

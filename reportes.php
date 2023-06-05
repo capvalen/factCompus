@@ -51,8 +51,8 @@ thead tr th{cursor: pointer;}
 <section class="mt-3">
 	<div class="container-fluid  px-5">
 		<div class="row">
-		<div class="col-md-3">
-			<center><img src="<?= $_COOKIE['logo'];?>" class='img-fluid mt-3 w-75'></center>
+		<div class="col-md-3 text-center">
+			<img src="<?= $_COOKIE['logo']?>" style='max-width: 30%'>
 		</div>
 		<div class="col ml-4">
 			<h3 class="display-4">Reportes</h3>

@@ -117,9 +117,9 @@ for ($i=0; $i < count($productos) ; $i++) {
 		}
 		
 		$sqlProd = "INSERT INTO `fact_detalle`(`codItem`, `facSerieCorre`, `codUnidadMedida`, `cantidadItem`, `codProducto`, `descripcionItem`,
-		`valorUnitario`, `valorExonerado`, `igvUnitario`, `mtoIgvItem`, `valorItem`, `mtoPrecioVenta`, `mtoValorVenta`, `codTriIGV`, `nomTributoIgvItem`, `tipAfeIGV`, `fechaEmision`, `idGravado`, `idProducto`, `porIgvItem`) VALUES
+		`valorUnitario`, `valorExonerado`, `igvUnitario`, `mtoIgvItem`, `valorItem`, `mtoPrecioVenta`, `mtoValorVenta`, `codTriIGV`, `nomTributoIgvItem`, `tipAfeIGV`, `fechaEmision`, `idGravado`, `idProducto`, `porIgvItem`, idTicket) VALUES
 		 (null,  concat('{$serie}','-','{$correlativo}'), '{$productos[$i]['unidadSunat']}', {$canti}, {$i}, '{$productos[$i]['descripcionProducto']}',
-		 {$costoUnit}, {$exonerado}, {$igvUnit}, {$igvCant}, {$valorUnit},{$subTo},{$valorUnit}, {$codigoIGV}, '{$nomTributo}', {$tipAfecto}, CONVERT_TZ(NOW(), '+00:00', '-05:00' ), {$productos[$i]['afecto']}, {$productos[$i]['idProd']}, {$porcentajeIGV});";
+		 {$costoUnit}, {$exonerado}, {$igvUnit}, {$igvCant}, {$valorUnit},{$subTo},{$valorUnit}, {$codigoIGV}, '{$nomTributo}', {$tipAfecto}, CONVERT_TZ(NOW(), '+00:00', '-05:00' ), {$productos[$i]['afecto']}, {$productos[$i]['idProd']}, {$porcentajeIGV}, {$_POST['emitir']});";
 		 $cadena->query($sqlProd);
 
 		 $_POST['idProd']=$productos[$i]['idProd'];

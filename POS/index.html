@@ -123,7 +123,7 @@
 					</div>
 					</div>
 				<div class="divProductosVarios" v-if="productosSerie.length >0">
-					<div class="row py-2 border-bottom noselect" v-for="(busqueda, item) in productosSerie" @click="llenarProductosSerie(item)">
+					<div class="row py-2 border-bottom noselect" v-for="(busqueda, item2) in productosSerie" @click="llenarProductosSerie(item2)">
 						<div class="col text-capitalize"><small>{{item+1}}. {{busqueda.prodDescripcion}}</small></div> 
 						<div class="col-2 text-secondary"><small><strong>{{busqueda.prodStock}} unds.</strong></small></div> 
 						<div class="col-2 text-secondary"><small><strong>S/ {{parseFloat(busqueda.prodPrecio).toFixed(2)}}</strong></small></div> 
@@ -432,6 +432,7 @@
 					//console.log( this.canasta );
 				}
 				if(this.productosNombre.length>1){
+					console.log('entra en varios');
 					this.canasta.push({
 						id: this.productosNombre[item].idProductos,
 						nombre: this.productosNombre[item].prodDescripcion,
@@ -464,8 +465,8 @@
 						response.data.serie.forEach(prod=> app.productos.push(prod) ) */
 						if(this.productosSerie.length == 0 && this.productosNombre.length==0)
 							alertify.error('<i class="bi bi-exclamation-diamond-fill"></i> No existe coincidencias en la búsqueda: <br> <small><strong class="ml-3">«'+this.prodBuscar+'»</strong></small>');
-						this.productosNombre.length>0 && this.productosSerie.length==0 ? this.llenarProductos() : false;
-						this.productosSerie.length>0 && this.productosNombre.length==0 ? this.llenarProductosSerie() : false;
+						this.productosNombre.length==1 && this.productosSerie.length==0 ? this.llenarProductos(0) : false;
+						this.productosSerie.length==1 && this.productosNombre.length==0 ? this.llenarProductosSerie(0) : false;
 					})
 					.catch((error)=>{ console.log( error );});
 				}
@@ -651,7 +652,7 @@
 				}];
 				this.clienteActual={dni: '00000000', razon: 'Cliente simple', idCliente:1, tipo:'persona', direccion:''};
 				this.modoCliente=null;
-				this.idProducto=null;
+				this.idProducto=-1;
 				this.preciosEspeciales=[];
 				this.productosNombre=[];
 				this.productosSerie=[];

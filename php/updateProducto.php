@@ -11,7 +11,8 @@ p.`idUnidad`= u.idUnidad ,
 `prodPrecio`= {$_POST['pPublico']},
 `prodPrecioMayor`= {$_POST['pMayor']},
 `prodPrecioDescto`= {$_POST['pDescuento']},
-`idGravado`= {$_POST['pImpuesto']}
+`idGravado`= {$_POST['pImpuesto']},
+`series`= {$_POST['pSeries']}
 WHERE `idProductos`= {$_POST['idProd']} and u.undSunat = '{$_POST['pUnidad']}'";
 $resultado=$cadena->query($sql);
 echo "ok";
