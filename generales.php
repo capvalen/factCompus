@@ -7,7 +7,7 @@ $dirRespuestas = $dirBaseSunat. '\RPTA/';
 $rucEmisor ='20568763832';
 $nombreEmisor = "GRUPO TECNOLOGICO C & C S.A.C.";
 $direccionEmisor = "Dirección: Av. Giraldez 2do Nivel Oficina 204 - Huancayo - Junín";
-$celularEmisor = "930171567";
+$celularEmisor = "946296578";
 $nombrePrint = 'CAJA'; //TM-T20II
 
 $casaHost = "pluginSunat";
@@ -35,7 +35,7 @@ $tipoTributo='1000';
 $nombreTributo = 'IGV';
 $tributoExtranjero = 'VAT';
 $afectacion = '10';
-$porcentajeIGV = $_COOKIE["igvGlobal"];
+$porcentajeIGV = $_COOKIE["igvGlobal"] ?? 18;
 $porcentajeIGV1 = 1+($porcentajeIGV)/100;
 $tributoISC = '-';
 $codigoISC = '0.00';

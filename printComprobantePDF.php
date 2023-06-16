@@ -161,7 +161,7 @@ while($rowD=$resultadoDetalle->fetch_assoc()){
 	$igvSubFin = str_replace (',', '',number_format($rowD['igvUnitario'],2));
 	$valorSubFin = str_replace (',', '',number_format($rowD['valorItem'],2));
 	$precProducto = number_format($rowD['valorUnitario']+$rowD['igvUnitario'],2);
-	$cantidadProd = $rowD['cantidadItem']
+	$cantidadProd = $rowD['cantidadItem'];
 
 	?>
 	<tr>

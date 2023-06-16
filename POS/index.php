@@ -589,7 +589,8 @@
 					let jTicket = response.data;
 					this.limpiarTodo();
 
-					/* if(app.impresionTicket){
+				<?php if($_COOKIE['ticket']=='automatico'){ ?>
+					if(app.impresionTicket){
 						$.ajax({url: "http://127.0.0.1/"+this.empresa.carpeta+"/printComprobante.php", type: 'POST', data: {
 							ticketera: this.empresa.ticketera,
 							tipoComprobante: jTicket[0].tipoComprobante,
@@ -616,9 +617,12 @@
 							//location.reload();
 						});
 
-					}else{
-						app.limpiarTodo();
-					} */
+					}
+				<?php }else{ ?>
+					window.open('../ticket.php?serie='+jTicket[0].serie+'&correlativo='+jTicket[0].correlativo, '_blank');
+				<?php } ?>
+					
+					app.limpiarTodo();
 				})
 				.catch((error)=>{ console.log( error );});
 			},

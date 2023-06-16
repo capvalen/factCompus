@@ -78,7 +78,7 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 					</div>
 					<div class="col-12 col-md-3">
 						<label for="">Observaciones</label>
-						<input type="number" class="form-control" v-model="cabecera.observaciones">
+						<input type="text" class="form-control" v-model="cabecera.observaciones">
 					</div>
 					<div class="d-flex align-items-end">
 					<button class="btn btn-outline-primary " id="btnCrearCompra" @click="checkVacios()"><i class="icofont-box"></i> Generar compra</button>
@@ -94,6 +94,7 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 						<th>N°</th>
 						<th>Nombre de producto</th>
 						<th>Cantidad</th>
+						<th>Precio Unit.</th>
 						<th>Stock Actual</th>
 						<th>¿Series?</th>
 						<th>Marca</th>
@@ -106,11 +107,12 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 						<td>{{ index+1 }}</td>
 						<td class="text-capitalize">{{ producto.nombre }}</td>
 						<td><input type="number" class="form-control" v-model="producto.cantidad"></td>
+						<td><input type="number" class="form-control" v-model="producto.precioCompra"></td>
 						<td>{{ producto.stock }}</td>
 						<td>{{ (producto.series==1)? 'Sí': 'No' }}</td>
 						<td>{{ producto.marca }}</td>
 						<td>{{ producto.linea }}</td>
-						<td><button class="btn btn-outline-danger btn-sm"><i class="icofont-trash"></i></button></td>
+						<td><button class="btn btn-outline-danger btn-sm" @click="quitarCesta(index)"><i class="icofont-trash"></i></button></td>
 					</tr>
 					<tr>
 						<td>-</td>
@@ -255,9 +257,9 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 				$('#modalCoincidencias').modal('hide')
 				this.texto='';
 				if(tipo=='producto')
-					this.cesta.push({cantidad: 1, nombre: this.productosNombre[index].prodDescripcion, barras:[], stock: this.productosNombre[index].prodStock, id: this.productosNombre[index].idProductos, marca: this.productosNombre[index].marca, linea: this.productosNombre[index].linea, series: this.productosNombre[index].series})
+					this.cesta.push({cantidad: 1, nombre: this.productosNombre[index].prodDescripcion, barras:[], stock: this.productosNombre[index].prodStock, id: this.productosNombre[index].idProductos, marca: this.productosNombre[index].marca, linea: this.productosNombre[index].linea, series: this.productosNombre[index].series, precio: this.productosNombre[index].precioCompra })
 				if(tipo=='serie')
-					this.cesta.push({cantidad: 1, nombre: this.productosSerie[index].prodDescripcion, barras:[], stock: this.productosSerie[index].prodStock, id: this.productosSerie[index].idProductos, marca: this.productosSerie[index].marca, linea: this.productosSerie[index].linea, series: this.productosSerie[index].series})
+					this.cesta.push({cantidad: 1, nombre: this.productosSerie[index].prodDescripcion, barras:[], stock: this.productosSerie[index].prodStock, id: this.productosSerie[index].idProductos, marca: this.productosSerie[index].marca, linea: this.productosSerie[index].linea, series: this.productosSerie[index].series, precio: this.productosSerie[index].precioCompra })
 				
 			},
 			checkVacios(){
@@ -319,6 +321,10 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 				.then(res=> { console.log(res.data)
 					if(res.data=='ok'){alert('Compra guardada'); location.reload();}
 				})
+			},
+			quitarCesta(index){
+				this.cesta.splice(index,1)
+				this.cesta.splice(index,1)
 			}
 		}
   }).mount('#app')

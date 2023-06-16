@@ -127,7 +127,7 @@ for ($i=0; $i < count($productos) ; $i++) {
 		 {$costoUnit}, {$exonerado}, {$igvUnit}, {$igvCant}, {$valorUnit},{$subTo},{$valorUnit}, {$codigoIGV}, '{$nomTributo}', {$tipAfecto}, now(), {$productos[$i]['afecto']}, {$productos[$i]['id']}, {$porcentajeIGV}, '{$productos[$i]['serie']}');";
 		 $cadena->query($sqlProd);
 
-		if( $soy<>'-1' ){ //$productos[$i]['serie']<>''
+		if( $soy<>'-1' && $productos[$i]['serie']<>'' ){ //$productos[$i]['serie']<>''
 			$sqlSerie="UPDATE `barras` SET `activo`=0 WHERE `barra`='{$productos[$i]['serie']}' ;"; // and `idProducto` = {$productos[$i]['id']}
 			$esclavo->query($sqlSerie);
 

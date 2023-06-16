@@ -17,8 +17,8 @@ $producto = $_POST['cesta'];
 //print_r($producto); die();
 $sqlProd='';
 for ($i=0; $i < count($producto) ; $i++) { 
-	$sqlProd="INSERT INTO `compras_detalle`(`idCompra`,`idProducto`, `cantidad`, `serie`) VALUES (
-		{$idCabecera}, {$producto[$i]['id']}, {$producto[$i]['cantidad']}, '{$producto[$i]['series']}');";
+	$sqlProd="INSERT INTO `compras_detalle`(`idCompra`,`idProducto`, `cantidad`, `serie`, `precioUnitario`, `subTotal`) VALUES (
+		{$idCabecera}, {$producto[$i]['id']}, {$producto[$i]['cantidad']}, '{$producto[$i]['series']}', '{$producto[$i]['precioCompra']}', {$producto[$i]['cantidad']} * {$producto[$i]['precioCompra']} );";
 	$cadena->query($sqlProd);
 		
 	if( $producto[$i]['series']<>'' && $producto[$i]['series']<>0  ){
@@ -34,7 +34,7 @@ for ($i=0; $i < count($producto) ; $i++) {
 		{$producto[$i]['id']},4, {$producto[$i]['cantidad']}, '{$cabeza['fecha']}', {$_COOKIE['ckidUsuario']}, 1, '');";
 		//echo $sqlProd;
 	$esclavo->query($sqlProd);
-	$sqlUpd="UPDATE `productos` SET `prodStock` =  `prodStock` + {$producto[$i]['cantidad']} where `idProductos`={$producto[$i]['id']};";
+	$sqlUpd="UPDATE `productos` SET `prodStock` =  `prodStock` + {$producto[$i]['cantidad']}, precioCompra = {$producto[$i]['precioCompra']} where `idProductos`={$producto[$i]['id']};";
 	$esclavo->query($sqlUpd);
 }
 //echo $sqlProd; die();

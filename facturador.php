@@ -111,9 +111,12 @@ include "generales.php"; ?>
 			</div>
 			<div class="modal-body">
 				<p>Comprobante generado correctamente. ¿Qué deseas hacer a continuación?</p>
-				<button class="btn btn-outline-primary" id="btnPrintTicketera"><i class="icofont-paper"></i> Imprimir en ticketera</button>
-				<button class="btn btn-outline-success d-none d-sm-block" id="btnPrintA4"><i class="icofont-print"></i> Generar A4</button>
-				<button class="btn btn-outline-success d-block d-sm-none" id="btnPrintPDF"><i class="icofont-print"></i> Generar PDF</button>
+				<div class="d-flex justify-content-between">
+					<button class="btn btn-outline-primary" id="btnPrintTicketera"><i class="icofont-paper"></i> Imprimir en ticketera</button>
+					<button class="btn btn-outline-success d-none d-sm-block" id="btnPrintA4"><i class="icofont-print"></i> Generar A4</button>
+					<button class="btn btn-outline-success d-block d-sm-none" id="btnPrintPDF"><i class="icofont-print"></i> Generar PDF</button>
+				</div>
+				
 
 			</div>
 			<div class="modal-footer d-none">
@@ -628,8 +631,9 @@ $('tbody').on('click', '.imprTicketFuera', function (e) {
 	var caso = padre.attr('data-caso');
 	var serie = padre.attr('data-serie');
 	var correlativo = padre.attr('data-correlativo');
-	
-	$.ajax({url: 'solicitarDataComprobante.php', type: 'POST', data: { caso:caso, serie: serie, correlativo: correlativo }}).done(function(resp) {
+
+	<?php if($_COOKIE['ticket']=='automatico'){ ?>
+		$.ajax({url: 'solicitarDataComprobante.php', type: 'POST', data: { caso:caso, serie: serie, correlativo: correlativo }}).done(function(resp) {
 		console.log( resp );
 		$.jTicket = JSON.parse(resp); //console.log( $.jTicket );
 		$.ajax({url: 'http://127.0.0.1/<?= $casaHost; ?>/<?= $_COOKIE['demoFacturador']=="true" ? 'php/printDemoTicket.php' : 'printComprobante.php' ?>', type: 'POST', data: {
@@ -657,10 +661,21 @@ $('tbody').on('click', '.imprTicketFuera', function (e) {
 			//location.reload();
 		});
 	});
+	<?php }else{ ?>
+		window.open('./ticket.php?serie='+serie+'&correlativo='+correlativo, '_blank');
+	<?php } ?>
+	
+	
 
 });
 $('#btnPrintTicketera').click(function() { console.log( 'ticketera' );
-	imprimitEnTicketera()
+	<?php if($_COOKIE['ticket']=='automatico'){ ?>
+		imprimitEnTicketera()
+	<?php }else{ ?>
+		let serie = $.jTicket[0].serie;
+		let correlativo = $.jTicket[0].correlativo;
+		window.open('./ticket.php?serie='+serie+'&correlativo='+correlativo, '_blank');
+	<?php } ?>
 });
 function imprimitEnTicketera(){
 	$.ajax({url: 'http://127.0.0.1/<?= $casaHost; ?>/printComprobante.php', type: 'POST', data: {
