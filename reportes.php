@@ -72,7 +72,7 @@ thead tr th{cursor: pointer;}
 				<select class="selectpicker" data-live-search="false" id="sltFiltroReporte" title="&#xed12; Tipo de reporte">
 					<option value="0">Resumido</option>
 					<option value="1">Contable</option>
-					<!-- <option value="2">Kardex</option> -->
+					<option value="2">Kardex</option>
 					<option value="3">Detallado</option>
 				</select>
 				<select class="selectpicker" data-live-search="false" id="sltFiltroProducto" title="&#xed12; Productos">
@@ -203,7 +203,10 @@ $('#btnBuscarReporte').click(function() {
 			case "2":
 				$('#divTablaSysCont').removeClass('d-none');
 				$('#tablaCabeceras').addClass('d-none');
-				$.ajax({url: 'php/reporteKardex.php', type: 'POST', data: { }}).done(function(resp) { console.log( resp );
+				var fecha1 = moment($('#txtFecha1').val(), 'DD/MM/YYYY').format('YYYY-MM-DD');
+				var fecha2 = moment($('#txtFecha2').val(), 'DD/MM/YYYY').format('YYYY-MM-DD');
+				var idProducto = $('#sltFiltroProducto').val();
+				$.ajax({url: 'php/reporteKardex.php', type: 'POST', data: { fecha1: fecha1, fecha2: fecha2, idProd: idProducto }}).done(function(resp) { console.log( resp );
 					$('#divTablaSysCont').children().remove();
 					$('#divTablaSysCont').append(resp).anotherJqueryMethod;
 				});

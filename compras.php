@@ -289,6 +289,7 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 										cantidad: 1,
 										unidad: 'Und.',
 										unidadSunat: 'NIU',
+										precioCompra: prod.precioCompra,
 										series: '',
 										repite: i,
 										pideSerie: prod.series

@@ -9,15 +9,12 @@
 </thead>
 <tbody>
 <?php 
-$_POST['fecha1']= '2019-05-28';
-$_POST['fecha2']= '2019-06-07'; 
-$_POST['idProd']= 1;
 
 date_default_timezone_set('America/Lima');
 include "conexion.php";
 
 $sqlSum="SELECT sum(stoCantidad) as sumaPositiva FROM `stock`
-where date_format(stoFechaMovimiento, '%Y-%m-%d') < '{$_POST['fecha1']}' AND idProceso in (1,4,5,6)
+where date_format(stoFechaMovimiento, '%Y-%m-%d') <= '{$_POST['fecha1']}' AND idProceso in (1,4,5,6)
 and idProducto = {$_POST['idProd']} and `stoActivo` =1; ";
 
 $resultadoSum=$cadena->query($sqlSum);
@@ -27,7 +24,7 @@ $sumaPositiva= $rowSum['sumaPositiva'];
 
 
 $sqlRes="SELECT sum(stoCantidad) as sumaNegativa FROM `stock`
-where date_format(stoFechaMovimiento, '%Y-%m-%d') < '{$_POST['fecha1']}' AND idProceso in (2,3)
+where date_format(stoFechaMovimiento, '%Y-%m-%d') <= '{$_POST['fecha1']}' AND idProceso in (2,3,7)
 and idProducto = {$_POST['idProd']} and `stoActivo` =1; ";
 $resultadoRes=$cadena->query($sqlRes);
 $rowRes=$resultadoRes->fetch_assoc();
@@ -39,7 +36,7 @@ $i=1; $sumActPosi=0; $sumActNega=0;
 $sqlMov="SELECT  `idStock`, `stoCantidad`, lower(date_format(`stoFechaMovimiento`, '%d/%m/%Y %h:%m %p')) as stoFechaMovimiento, u.usuNombres, `stoObservaciones` , prc.procDescripcion, s.idProceso FROM stock s 
 inner join procesos prc on prc.idProceso = s.idProceso
 inner join usuario u on u.idUsuario = s.idUsuario
-where date_format(stoFechaMovimiento, '%Y-%m-%d') between '{$_POST['fecha1']}' and '{$_POST['fecha2']}' AND s.idProceso in (1,2,3,4,5,6) and idProducto = {$_POST['idProd']}
+where date_format(stoFechaMovimiento, '%Y-%m-%d') between '{$_POST['fecha1']}' and '{$_POST['fecha2']}' AND s.idProceso in (1,2,3,4,5,6,7) and idProducto = {$_POST['idProd']}
 and `stoActivo` =1";
 $resultadoMov=$esclavo->query($sqlMov);
 while($rowMov=$resultadoMov->fetch_assoc()){
@@ -73,7 +70,7 @@ while($rowMov=$resultadoMov->fetch_assoc()){
 $sumaGlobal = $sumResumenAnt+$sumActPosi-$sumActNega;
 ?>
 </tbody>
-<tfoot>
+<tfoot class="d-none">
 	<tr>
 		<td></td>
 		<td></td>
@@ -84,7 +81,7 @@ $sumaGlobal = $sumResumenAnt+$sumActPosi-$sumActNega;
 	</tr>
 </tfoot>
 </table>
-<div class="ml-5">
+<div class="ml-5 d-none">
 	<p><strong>Conteo anterior:</strong> <span><?= $sumResumenAnt; ?></span></p>
 	<p><strong>Suma Ingresos:</strong> <span><?= $sumActPosi; ?></span></p>
 	<p><strong>Suma Egresos:</strong> <span><?= $sumActNega; ?></span></p>

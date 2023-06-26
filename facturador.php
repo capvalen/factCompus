@@ -1387,7 +1387,7 @@ function borrarDefinitivamente(){
 	$.ajax({url: 'php/borrarInterno.php', type: 'POST', data: { id: $.idComprobante }}).done(function(resp) {
 		console.log(resp)
 		if(resp=='ok'){
-			location.reload();
+			//location.reload();
 		}
 	});
 }

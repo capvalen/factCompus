@@ -3,6 +3,7 @@ include "conexion.php";
 $_POST = json_decode(file_get_contents('php://input'),true);
 
 $cabeza = $_POST['cabecera'];
+//var_dump($_POST); die();
 
 $sql="INSERT INTO `compras`(`idOrigen`, `idComprobante`, `fecha`, `serie`, `idProveedor`, 
 `idUsuario`,`bultos`) VALUES 
@@ -16,17 +17,25 @@ $idCabecera = $cadena->insert_id;
 $producto = $_POST['cesta'];
 //print_r($producto); die();
 $sqlProd='';
-for ($i=0; $i < count($producto) ; $i++) { 
-	$sqlProd="INSERT INTO `compras_detalle`(`idCompra`,`idProducto`, `cantidad`, `serie`, `precioUnitario`, `subTotal`) VALUES (
-		{$idCabecera}, {$producto[$i]['id']}, {$producto[$i]['cantidad']}, '{$producto[$i]['series']}', '{$producto[$i]['precioCompra']}', {$producto[$i]['cantidad']} * {$producto[$i]['precioCompra']} );";
-	$cadena->query($sqlProd);
+for ($i=0; $i < count($producto) ; $i++) {
+	$sqlProd = "INSERT INTO `compras_detalle`(`idCompra`,`idProducto`, `cantidad`, `serie`, `precioUnitario`, `subTotal`) VALUES (?,?,?,?,?,?);";
+	$sentProd = $datab->prepare($sqlProd);
+	//print_r( "{$idCabecera} {$producto[$i]['id']}, {$producto[$i]['cantidad']}, {$producto[$i]['series']}, {$producto[$i]['precioCompra']}, {$producto[$i]['cantidad']}, {$producto[$i]['precioCompra']}\n");
+	$sentProd -> execute([
+		$idCabecera, $producto[$i]['id'], $producto[$i]['cantidad'], $producto[$i]['series'], $producto[$i]['precioCompra'], $producto[$i]['cantidad'] * $producto[$i]['precioCompra']
+	]);
+	$sentProd->closeCursor();
+	
+	//echo "Sentencia SQL prod: \n" . $sentProd->debugDumpParams();
 		
 	if( $producto[$i]['series']<>'' && $producto[$i]['series']<>0  ){
-		$sqlProd="INSERT INTO `barras`(`idProducto`, `barra`, `activo`) VALUES (
-			{$producto[$i]['id']}, '{$producto[$i]['series']}', 1
-		);";
-	$cadena->query($sqlProd);
-
+		$sqlSerie = "INSERT IGNORE INTO `barras`(`idProducto`, `barra`, `activo`) VALUES (?, ?, ?)";
+		$sentSerie = $datab->prepare($sqlSerie);
+		$sentSerie -> execute([
+			$producto[$i]['id'], $producto[$i]['series'], 1
+		]);
+		$sentSerie->closeCursor();
+		//echo "Sentencia SQL serie: \n" . $sentSerie->debugDumpParams();
 	}
 	
 
@@ -35,8 +44,9 @@ for ($i=0; $i < count($producto) ; $i++) {
 		//echo $sqlProd;
 	$esclavo->query($sqlProd);
 	$sqlUpd="UPDATE `productos` SET `prodStock` =  `prodStock` + {$producto[$i]['cantidad']}, precioCompra = {$producto[$i]['precioCompra']} where `idProductos`={$producto[$i]['id']};";
-	$esclavo->query($sqlUpd);
+	$conf->query($sqlUpd);
 }
 //echo $sqlProd; die();
 echo 'ok';
+
 ?>
