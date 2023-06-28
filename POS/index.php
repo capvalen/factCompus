@@ -1,3 +1,4 @@
+<?php include '../generales.php'; ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -101,9 +102,23 @@
 						<label><input type="checkbox" id="chkImprimir" v-model="impresionTicket"> <span v-if="impresionTicket">Imprimir ticket</span> <span v-else>Sin impresión</span></label><br>
 					</div>
 					<div class="col ">
+						<?php if($cajaAbierta['abierto']==1): ?>
 						<button class="btn btn-outline-success float-right mt-4" @click="emitir()"><i class="bi bi-bookmark-star"></i> Emitir </button>
+						<?php endif; ?>
 					</div>
 				</div>
+				<?php if($cajaAbierta['abierto']==0): ?>
+				<div class="row">
+					<div class="col">
+						<div class="alert alert-danger mt-2 alert-dismissible fade show" role="alert">
+							<i class="bi bi-exclamation-circle"></i> No hay ninguna caja abierta, debe abrir una caja para hacer ventas
+							<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+					</div>
+				</div>
+				<?php endif; ?>
 				
 			
 				<p class="mb-1"><i class="bi bi-upc-scan"></i> Escanee o haga una búsqueda:</p>
@@ -566,7 +581,7 @@
 								subTotal: prod.subTotal,
 								serie: i==0 ? prod.serie : '',
 								repite: i,
-								pideSerie: prod.pideSerie
+								pideSerie: prod.pideSerie,
 							});
 							if (i>0) vacios++
 						}
@@ -583,7 +598,7 @@
 			},
 			guardar(){
 				let cabecera = { tipo: this.tipoVenta, serie: this.serie, fecha: moment().format('YYYY-MM-DD') }
-				axios.post('../php/insertarBoleta_v4.php', {empresa: this.empresa, cliente: this.clienteActual, cabecera: cabecera, jsonProductos: this.separados
+				axios.post('../php/insertarBoleta_v4.php', {empresa: this.empresa, cliente: this.clienteActual, cabecera: cabecera, jsonProductos: this.separados, idCaja: '<?= $cajaAbierta['id']?>'
 				})
 				.then((response)=>{ console.log( response.data );
 					let jTicket = response.data;
@@ -701,6 +716,7 @@
 	#divRegistroCliente input{
 		margin: 0.5rem 0;
 	}
+	.alert-danger { color: #ffffff; background-color: #ff2e41; border-color: #f5c6cb; }
 	.alertify-notifier .ajs-message.ajs-error {
 		background: rgb(239 4 4 / 95%);
 		color: white;

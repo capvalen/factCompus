@@ -4,7 +4,7 @@ include "generales.php";
 
 if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 	die(); }
-include "generales.php"; ?>
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -17,6 +17,7 @@ include "generales.php"; ?>
 <style>
 	.modal-xl { max-width: 95vw!important;}
 	.table-responsive{min-height: 70vh;}
+	.alert-danger { color: #ffffff; background-color: #ff2e41; border-color: #f5c6cb; }
 </style>
 <?php include 'menu-wrapper.php'; ?>
 
@@ -50,6 +51,16 @@ include "generales.php"; ?>
 					<div class="col-sm-2"><button class="btn btn-outline-primary" id="btnRefresh"><i class="icofont-refresh"></i> Actualizar</button></div>
 				</div>
 			</div></div>
+		<?php if($cajaAbierta['abierto']==0): ?>
+			<section>
+			<div class="alert alert-danger mt-2 alert-dismissible fade show" role="alert">
+				<i class="icofont-warning-alt"></i> No hay ninguna caja abierta, debe abrir una caja para hacer ventas. <a href="caja.php" style="color:white; font-weight: bold">Ingrese acá para aperturar.</a>
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			</section>
+		<?php endif; ?>
 			<hr>
 			<div class="container mx-auto mt-4 row" style="color: #7030a0">
 				<div class="col"><strong>N° Comprobantes: <span id="strCantdad"></span></strong></div>
@@ -258,10 +269,12 @@ include "generales.php"; ?>
 					<input type="number" class="form-control col-sm-3" id="txtPagaCuanto">
 					<label for="" class="col-sm-4 col-form-label d-none"><small>Vuelto: S/<span id="spanVuelto"></span></small></label>
 				</div>
+				<?php if($cajaAbierta['abierto']==1): ?>
 				<div class="col mt-2 mt-md-0">
 					<button type="button" class="btn btn-outline-success float-right d-none" id="btnEmitirFacturav2" ><i class="icofont-paper"></i> Emitir Factura</button>
 					<button type="button" class="btn btn-outline-primary float-right" id="btnEmitirBoletav2" ><i class="icofont-paper"></i> Emitir Boleta</button>
 				</div>
+				<?php endif; ?>
 				<div class="container-fluid row mt-3 d-flex justify-content-end d-none" id="">
 					<span id="spanLimiteSobrepasado" style="background: #e6330a!important;"><span class=""><i class="icofont-chat"></i> Se sobrepasó el límite máximo en comprobantes.</span></span>
 				</div>
@@ -1031,8 +1044,8 @@ $('#btnEmitirBoletav2').click(function() {
 			});
 			
 			
-			$.ajax({url: 'php/insertarBoleta.php', type: 'POST', data: { emitir: 3, queSerie: $('#sltSeriesBoleta').val(), dniRUC: dniRc, razonSocial: razon, cliDireccion: $('#txtDireccionBoleta').val(),jsonProductos: jsonProductos, jsonCliente: jsonCliente, fecha: $('#txtFechaComprobante').val() }}).done(function(resp) { //  placa: $('#txtPlacaBoleta').val(),
-				//console.log(resp)
+			$.ajax({url: 'php/insertarBoleta.php', type: 'POST', data: { emitir: 3, queSerie: $('#sltSeriesBoleta').val(), dniRUC: dniRc, razonSocial: razon, cliDireccion: $('#txtDireccionBoleta').val(),jsonProductos: jsonProductos, jsonCliente: jsonCliente, fecha: $('#txtFechaComprobante').val(), idCaja:'<?= $cajaAbierta['id']?>' }}).done(function(resp) { //  placa: $('#txtPlacaBoleta').val(),
+				console.log(resp)
 				$.jTicket = JSON.parse(resp); console.log( $.jTicket );
 				if($.jTicket.length >=1){
 					$('#modalEmisionBoleta').modal('hide');
@@ -1105,7 +1118,7 @@ $('#btnEmitirFacturav2').click(function() {
 		}
 		});
 		
-		$.ajax({url: 'php/insertarBoleta.php', type: 'POST', data: { emitir: 1, queSerie: $('#sltSeriesBoleta').val(), dniRUC: dniRc, razonSocial: razon, cliDireccion: $('#txtDireccionBoleta').val(), jsonProductos: jsonProductos, jsonCliente: jsonCliente, fecha: $('#txtFechaComprobante').val() }}).done(function(resp) { // placa: $('#txtPlacaBoleta').val(),
+		$.ajax({url: 'php/insertarBoleta.php', type: 'POST', data: { emitir: 1, queSerie: $('#sltSeriesBoleta').val(), dniRUC: dniRc, razonSocial: razon, cliDireccion: $('#txtDireccionBoleta').val(), jsonProductos: jsonProductos, jsonCliente: jsonCliente, fecha: $('#txtFechaComprobante').val(), idCaja:'<?= $cajaAbierta['id']?>' }}).done(function(resp) { // placa: $('#txtPlacaBoleta').val(),
 			console.log(resp)
 			$.jTicket = JSON.parse(resp); console.log( $.jTicket );
 			if($.jTicket.length >=1){

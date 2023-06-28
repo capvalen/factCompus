@@ -57,4 +57,10 @@ $valorVentaInvoce='10.00';
 $gratuito ='0.00';
 $monedaC = 'PEN';
 
+$_POST['accion'] = 'verificarCaja'; 
+ob_start();
+require_once( __DIR__ .'/php/caja.php');
+$cajaAbierta = json_decode(ob_get_clean(), true);
+$cajaAbierta = $cajaAbierta[0];
+
 ?>
