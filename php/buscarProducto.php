@@ -6,7 +6,7 @@ $_POST = json_decode(file_get_contents('php://input'),true);
 $sql="SELECT p.*, m.marca, l.linea FROM `productos` p
 inner join marcas m on m.id = p.idMarca
 inner join lineas l on l.id = p.idLinea
-where prodDescripcion like concat('%' , '{$_POST['texto']}' , '%') and prodActivo=1 ;";
+where (prodDescripcion like concat('%' , '{$_POST['texto']}' , '%') or similares like concat('%' , '{$_POST['texto']}' , '%') ) and prodActivo=1 ;";
 
 $resultado=$cadena->query($sql);
 $productos=array(); $serie=array();

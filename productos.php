@@ -170,6 +170,12 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 						</select>
 					</div>
 				</div>
+				<div class="form-group row">
+					<label for="" class="col-sm-4 col-form-label">Productos similades:</label>
+					<div class="col-sm-6">
+						<textarea class="form-control" id="txtSimilaresNuevo" rows="3"></textarea>
+					</div>
+				</div>
       </div>
       <div class="modal-footer d-flex flex-column">
 				<label class="text-danger	d-none" for=""></label>
@@ -230,6 +236,12 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 						<select class="selectpicker" data-live-search="false" id="sltFiltroUnidades" title="&#xed12; Unidades">
 							<?php include "php/listarUnidadesOPT.php"; ?>
 						</select>
+					</div>
+				</div>
+				<div class="form-group row">
+				<label for="" class="col-sm-4 col-form-label">Productos similades:</label>
+					<div class="col-sm-6">
+						<textarea class="form-control" id="txtSimilaresEdit" rows="3"></textarea>
 					</div>
 				</div>
       </div>
@@ -395,7 +407,9 @@ $('#btnUpdateProduct').click(function() {
 	if( $('#txtPrecioMayor').val()!='' ){ pMayor=$('#txtPrecioMayor').val(); }
 	if( $('#txtPrecioDescuento').val()!='' ){ pDescuento=$('#txtPrecioDescuento').val(); }
 
-	$.ajax({url: 'php/updateProducto.php', type: 'POST', data: { idProd: $('#btnUpdateProduct').attr('data-id'), pNombre: $('#txtDescripcionPub').val(), pPublico: pPublico, pMayor: pMayor, pDescuento: pDescuento, pImpuesto: $('#sltFiltroGravado').selectpicker('val'), pUnidad: $('#sltFiltroUnidades').selectpicker('val'), pSeries: $('#sltSeriesMod').val() }}).done(function(resp) { console.log( resp );
+	$.ajax({url: 'php/updateProducto.php', type: 'POST', data: { idProd: $('#btnUpdateProduct').attr('data-id'), pNombre: $('#txtDescripcionPub').val(), pPublico: pPublico, pMayor: pMayor, pDescuento: pDescuento, pImpuesto: $('#sltFiltroGravado').selectpicker('val'), pUnidad: $('#sltFiltroUnidades').selectpicker('val'), pSeries: $('#sltSeriesMod').val(),
+	similares: $('#txtSimilaresEdit').val()
+	}}).done(function(resp) { console.log( resp );
 		if(resp=='ok'){
 			$('#h5Detalle').text('Producto Actualizado');
 			$('#modalEditarProducto').modal('hide');
@@ -424,7 +438,7 @@ $('#btnNuevoProduct').click(function() {
 		$('#modalNuevoProducto .text-danger').removeClass('d-none').html('<i class="icofont-cat-alt-3"></i> Debe rellenar todos los campos olbigatorios');
 	}else{
 		$.ajax({url: 'php/insertarProducto.php', type: 'POST', data: {nombre: $('#txtDescripcionNuevo').val(), precio: $('#txtPrecioNuevo').val(), mayor: $('#txtPrecioMayorNuevo').val(), descuento: $('#txtPrecioDescuentoNuevo').val(), gravado: $('#sltFiltroGravadoNuevo').selectpicker('val'), unidad: $('#sltFiltroUnidadesNuevo').selectpicker('val'), codeSunat: $('#txtCodeSunat').val(),
-			series: $('#sltSeries').val(), marca: $('#sltMarcas').val(), linea: $('#sltLineas').val(), familia: $('#sltFamilias').val(), subfamilia: $('#sltSubFamilias').val(), 
+			series: $('#sltSeries').val(), marca: $('#sltMarcas').val(), linea: $('#sltLineas').val(), familia: $('#sltFamilias').val(), subfamilia: $('#sltSubFamilias').val(), similares: $('#txtSimilaresNuevo').val()
 		 }}).done(function(resp) {
 			//console.log(resp)
 			if( resp =='ok'){

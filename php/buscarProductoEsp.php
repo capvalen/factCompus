@@ -24,8 +24,8 @@ while($row=$resultado->fetch_assoc()){
 		<td class="<?= ($_COOKIE['facCambiarUnidad']==0 ? 'd-none': '') ?>"><?= $row['undDescipcion']; ?></td>
 		<td><?= $row['estActivo']; ?></td>
 		<td>
-			<button class="btn btn-outline-primary btn-sm border border-light btnEditProducto" data-toggle="tooltip" data-placement="top" title="" data-original-title="Editar Producto"><i class="icofont-flag"></i></button>
-			<button class="btn btn-outline-dark btn-sm border border-light btnStockProducto" data-toggle="tooltip" data-placement="top" title="" data-original-title="Modificar Stock"><i class="icofont-magic"></i></button>
+			<button class="btn btn-outline-primary btn-sm border border-light btnEditProducto" data-toggle="tooltip" data-placement="top" title="" data-original-title="Editar Producto"><i class="icofont-edit"></i></button>
+			<button class="btn btn-outline-dark btn-sm border border-light btnStockProducto" data-toggle="tooltip" data-placement="top" title="" data-original-title="Modificar Stock"><i class="icofont-inbox"></i></button>
 			<button class="btn btn-outline-success btn-sm border border-light btnBarras" onclick="verBarrasDe(<?= $row['idProductos']; ?>)" data-toggle="tooltip" data-placement="top" title="" data-original-title="Código de barras"><i class="icofont-bar-code"></i></button>
 		</td>
 	</tr>
@@ -53,8 +53,8 @@ while($rowBarras=$resultadoBarras->fetch_assoc()){
 		<td class="<?= ($_COOKIE['facCambiarUnidad']==0 ? 'd-none': '') ?>"><?= $row['undDescipcion']; ?></td>
 		<td><?= $rowBarras['estActivo']; ?></td>
 		<td>
-			<button class="btn btn-outline-primary btn-sm border border-light btnEditProducto" data-toggle="tooltip" data-placement="top" title="" data-original-title="Editar Producto"><i class="icofont-flag"></i></button>
-			<button class="btn btn-outline-dark btn-sm border border-light btnStockProducto" data-toggle="tooltip" data-placement="top" title="" data-original-title="Modificar Stock"><i class="icofont-magic"></i></button>
+			<button class="btn btn-outline-primary btn-sm border border-light btnEditProducto" data-toggle="tooltip" data-placement="top" title="" data-original-title="Editar Producto"><i class="icofont-edit"></i></button>
+			<button class="btn btn-outline-dark btn-sm border border-light btnStockProducto" data-toggle="tooltip" data-placement="top" title="" data-original-title="Modificar Stock"><i class="icofont-inbox"></i></button>
 			<button class="btn btn-outline-success btn-sm border border-light btnBarras" onclick="verBarrasDe(<?= $rowBarras['idProductos']; ?>)" data-toggle="tooltip" data-placement="top" title="" data-original-title="Código de barras"><i class="icofont-bar-code"></i></button>
 		</td>
 	</tr>

@@ -125,13 +125,16 @@
 
 				<input type="text" class="form-control" placeholder="Descripción o código de barras" id="txtBusquedaProducto" v-on:keyup.enter="buscarProducto()" v-model="prodBuscar">
 
-				<div class="row" v-if="productos.length >0">
+				<div class="row" v-if="productosNombre.length >0 || productosSerie.length>0">
 					<div class="col"><p class="my-2"><small><strong>Coincidencias</strong></small></p></div>
-					<div class="col mt-2"><button class="btn btn-outline-success btn-sm float-right border-0" @click="productos=[]; prodBuscar='';"><i class="bi bi-eraser"></i> Limpiar</button></div>
+					<div class="col mt-2"><button class="btn btn-outline-success btn-sm float-right border-0" @click="productosNombre=[]; productosSerie=[]; prodBuscar='';"><i class="bi bi-eraser"></i> Limpiar</button></div>
 				</div>
 				<div class="divProductosVarios" v-if="productosNombre.length >0">
 					<div class="row py-2 border-bottom noselect" v-for="(busqueda, item) in productosNombre" @click="llenarProductos(item)">
-						<div class="col text-capitalize"><small>{{item+1}}. {{busqueda.prodDescripcion}}</small></div> 
+						<div class="col text-capitalize">
+							<small>{{item+1}}. {{busqueda.prodDescripcion}}</small>
+							<p class="mb-0" v-if="busqueda.similares!=''"><small><strong>Similares:</strong> {{busqueda.similares}}</small></p>
+						</div> 
 						<div class="col-2 text-secondary"><small><strong>{{busqueda.prodStock}} unds.</strong></small></div> 
 						<div class="col-2 text-secondary"><small><strong>S/ {{parseFloat(busqueda.prodPrecio).toFixed(2)}}</strong></small></div> 
 						<div class="col-1 d-flex justify-content-center"><i class="bi bi-box-arrow-right"></i></div>
@@ -139,7 +142,10 @@
 					</div>
 				<div class="divProductosVarios" v-if="productosSerie.length >0">
 					<div class="row py-2 border-bottom noselect" v-for="(busqueda2, item2) in productosSerie" @click="llenarProductosSerie(item2)">
-						<div class="col text-capitalize"><small>{{item2+1}}. {{busqueda2.prodDescripcion}}</small></div> 
+						<div class="col text-capitalize">
+							<small>{{item2+1}}. {{busqueda2.prodDescripcion}}</small>
+							<p class="mb-0" v-if="busqueda2.similares!=''"><small><strong>Similares:</strong> {{busqueda2.similares}}</small></p>
+						</div> 
 						<div class="col-2 text-secondary"><small><strong>{{busqueda2.prodStock}} unds.</strong></small></div> 
 						<div class="col-2 text-secondary"><small><strong>S/ {{parseFloat(busqueda2.prodPrecio).toFixed(2)}}</strong></small></div> 
 						<div class="col-1 d-flex justify-content-center"><i class="bi bi-box-arrow-right"></i></div>
