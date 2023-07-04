@@ -30,13 +30,14 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 	<section>
 		<div class="container-fluid mt-5 px-5">
 			<div class="row">
-			<div class="col-md-3 text-center">
-				<img src="<?= $_COOKIE['logo']?>" style='max-width: 30%'>
+				<div class="col-md-3 text-center">
+					<img src="<?= $_COOKIE['logo']?>" style='max-width: 30%'>
+				</div>
+				<div class="col ml-4">
+					<h3 class="display-4">Gestión de proveedores</h3>
+					<small class="text-muted">Usuario: <?= strtoupper($_COOKIE['ckAtiende']); ?></small>
+				</div>
 			</div>
-			<div class="col ml-4">
-				<h3 class="display-4">Gestión de proveedores</h3>
-				<small class="text-muted">Usuario: <?= strtoupper($_COOKIE['ckAtiende']); ?></small>
-			</div></div>
 			<div class="card mt-3">
 				<div class="card-body row">
 					<div class="col-12 col-md-6 form-inline my-2">

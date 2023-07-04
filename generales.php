@@ -4,7 +4,7 @@ $dirBaseSunat = 'D:\Fac_Casabarro_1.3.4.4\sunat_archivos\sfs';
 $directorio = $dirBaseSunat. '\DATA/';
 $dirRespuestas = $dirBaseSunat. '\RPTA/';
 
-$rucEmisor ='20568763832';
+$rucEmisor ='20602769331';
 $nombreEmisor = "GRUPO TECNOLOGICO C & C S.A.C.";
 $direccionEmisor = "Dirección: Av. Giraldez 2do Nivel Oficina 204 - Huancayo - Junín";
 $celularEmisor = "946296578";
@@ -61,6 +61,6 @@ $_POST['accion'] = 'verificarCaja';
 ob_start();
 require_once( __DIR__ .'/php/caja.php');
 $cajaAbierta = json_decode(ob_get_clean(), true);
-$cajaAbierta = $cajaAbierta[0];
+$cajaAbierta = $cajaAbierta[0] ?? [] ;
 
 ?>

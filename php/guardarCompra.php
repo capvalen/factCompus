@@ -28,13 +28,25 @@ for ($i=0; $i < count($producto) ; $i++) {
 	
 	//echo "Sentencia SQL prod: \n" . $sentProd->debugDumpParams();
 		
-	if( $producto[$i]['series']<>'' && $producto[$i]['series']<>0  ){
-		$sqlSerie = "INSERT IGNORE INTO `barras`(`idProducto`, `barra`, `activo`) VALUES (?, ?, ?)";
-		$sentSerie = $datab->prepare($sqlSerie);
-		$sentSerie -> execute([
-			$producto[$i]['id'], $producto[$i]['series'], 1
-		]);
-		$sentSerie->closeCursor();
+	if( $producto[$i]['pideSerie'] == '1' ){ //Debe tener serie
+		$sqlBuscar = "SELECT barra from barras where barra = ? and activo = 1 and  ? <> ''; ";
+		$sentBuscar = $datab->prepare($sqlBuscar);
+		$sentBuscar-> execute([ $producto[$i]['series'], $producto[$i]['series'] ]);
+		$rowBuscar = $sentBuscar->fetch(PDO::FETCH_ASSOC);
+		//echo 'coindicencias encontradas. '. $sentBuscar -> rowCount();
+		$sentBuscar->closeCursor();
+		if( $sentBuscar -> rowCount()  == 0){
+			$sqlSerie = "INSERT INTO `barras`(`idProducto`, `barra`, `activo`) VALUES (?, ?, ?)";
+			$sentSerie = $datab->prepare($sqlSerie);
+			$sentSerie -> execute([
+				$producto[$i]['id'], $producto[$i]['series'], 1
+			]);
+			$sentSerie->closeCursor();
+		}
+		
+
+
+		
 		//echo "Sentencia SQL serie: \n" . $sentSerie->debugDumpParams();
 	}
 	

@@ -6,7 +6,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Pos Ventas - Infocat</title>
-	<link rel="shortcut icon" href="images/VirtualCorto.png" type="image/png">
+	<link rel="shortcut icon" href="../images/VirtualCorto.png" type="image/png">
 	<link rel="stylesheet" href="../css/bootstrap.css">
 	<link rel="stylesheet" href="css/bootstrap-icons.css">
 	<link rel="stylesheet" href="../css/alertify.min.css">
@@ -138,10 +138,10 @@
 					</div>
 					</div>
 				<div class="divProductosVarios" v-if="productosSerie.length >0">
-					<div class="row py-2 border-bottom noselect" v-for="(busqueda, item2) in productosSerie" @click="llenarProductosSerie(item2)">
-						<div class="col text-capitalize"><small>{{item+1}}. {{busqueda.prodDescripcion}}</small></div> 
-						<div class="col-2 text-secondary"><small><strong>{{busqueda.prodStock}} unds.</strong></small></div> 
-						<div class="col-2 text-secondary"><small><strong>S/ {{parseFloat(busqueda.prodPrecio).toFixed(2)}}</strong></small></div> 
+					<div class="row py-2 border-bottom noselect" v-for="(busqueda2, item2) in productosSerie" @click="llenarProductosSerie(item2)">
+						<div class="col text-capitalize"><small>{{item2+1}}. {{busqueda2.prodDescripcion}}</small></div> 
+						<div class="col-2 text-secondary"><small><strong>{{busqueda2.prodStock}} unds.</strong></small></div> 
+						<div class="col-2 text-secondary"><small><strong>S/ {{parseFloat(busqueda2.prodPrecio).toFixed(2)}}</strong></small></div> 
 						<div class="col-1 d-flex justify-content-center"><i class="bi bi-box-arrow-right"></i></div>
 					</div>
 
@@ -232,7 +232,7 @@
 						</table>
 						
 						<div class='d-flex justify-content-end mt-3'>
-							<button type='button' class='btn btn-outline-primary btn-sm' data-dismiss="modal" @click="guardar()"><i class="bi bi-paper"></i> Emitir Comprobante</button>
+							<button type='button' class='btn btn-outline-primary btn-sm' data-dismiss="modal" @click="preGuardar()"><i class="bi bi-paper"></i> Emitir Comprobante</button>
 						</div>
 					</div>
 				</div>
@@ -589,11 +589,38 @@
 					}
 				});
 				//console.log('vacios',vacios);
-				if(vacios>0){
-					$('#modalRellenarSeries').modal('show');
+				if(this.tipoVenta==-1)
+					this.guardar();
+				else
+					if(vacios>0){
+						$('#modalRellenarSeries').modal('show');
+					}else{
+						alertify.message('<i class="bi bi-info-circle"></i> Generando el comprobante, espere').delay(5);
+						this.preGuardar()
+					}
+			},
+			async preGuardar(){
+				let seriesContenido = [];
+				this.separados.forEach(separa =>{
+					if(separa.pideSerie =='1')
+						if (separa.serie!='' && separa.serie!='1') seriesContenido.push(separa.serie)
+				})
+				if(seriesContenido.length>0){
+					let datos = new FormData();
+					datos.append('barras', JSON.stringify(seriesContenido) )
+					fetch('../php/verificarBarrasExistentes.php', {
+						method:'POST', body:datos
+					})
+					.then(serv => serv.json() )
+					.then( resp => {
+						console.log(resp)
+						if(resp.noExiste.length>0)
+							alertify.error('<i class="bi bi-info-circle"></i> La barra no esta registrada: '+ resp.noExiste).delay(5);
+						else
+						this.guardar();
+					})
 				}else{
-					alertify.message('<i class="bi bi-info-circle"></i> Generando el comprobante, espere').delay(15);
-					this.guardar()
+					this.guardar();
 				}
 			},
 			guardar(){
@@ -601,6 +628,7 @@
 				axios.post('../php/insertarBoleta_v4.php', {empresa: this.empresa, cliente: this.clienteActual, cabecera: cabecera, jsonProductos: this.separados, idCaja: '<?= $cajaAbierta['id']?>'
 				})
 				.then((response)=>{ console.log( response.data );
+					alertify.success('<i class="bi bi-check-circle"></i> Venta guardada').delay(15);
 					let jTicket = response.data;
 					this.limpiarTodo();
 
@@ -729,6 +757,11 @@
 	}
 	.alertify-notifier .ajs-message {
 			background: rgb(29 57 255 / 95%);
+			color: white;
+			border-radius: 2rem;
+	}
+	.alertify-notifier .ajs-message.ajs-success{
+			background: #0fbd0c;
 			color: white;
 			border-radius: 2rem;
 	}

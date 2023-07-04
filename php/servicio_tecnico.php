@@ -1,12 +1,12 @@
 <?php 
 
 include 'conexion.php';
-include '../generales.php';
-
+//include '../generales.php';
 switch($_POST['accion']){
 	case 'registrar': registrar($datab); break;
 	case 'registrar-diagnostico': registrarDiagnostico($datab); break;
 	case 'registrar-pago': registrarPago($datab); break;
+	case 'inventario': inventario($datab); break;
 }
 
 function registrar($db){
@@ -57,5 +57,22 @@ function registrarPago($db){
 	//echo $res->debugDumpParams();
 	
 	if($res) echo 'ok';
+	else echo 'error';
+}
+function inventario($db){
+	$inventarios = [];
+	$sqlInventarios = "SELECT tm.*, tr.*, td.*, u.usuNombres, tm.fecha as fechaMonto FROM `tecnico_monto` tm
+	inner join tecnico_recepcion tr on tm.idRecepcion = tr.id
+	inner join tecnico_diagnostico td on td.idRecepcion = tr.id
+	inner join usuario u on u.idUsuario = td.idUsuario
+	where date_format(tm.fecha, '%Y-%m-%d') BETWEEN ? and ? ;";
+	$resInventarios = $db->prepare($sqlInventarios);
+	$resInventarios -> execute([ $_POST['inicio'], $_POST['fin'] ]);
+	while($row = $resInventarios -> fetch(PDO::FETCH_ASSOC)){
+		$inventarios[] = $row;
+	}
+
+	if($resInventarios)
+		echo json_encode( $inventarios );
 	else echo 'error';
 }

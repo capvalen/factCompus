@@ -117,7 +117,7 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 						</select>
 					</div>
 				</div>
-				<div class="form-group row">
+				<div class="form-group row d-none">
 					<label for="txtCodeSunat" class="col-sm-4 col-form-label">Linea:</label>
 					<div class="col-sm-8"> 
 						<select class="form-control" id="sltLineas">
@@ -126,7 +126,7 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 					</div>
 				</div>
 				<div class="form-group row">
-					<label for="txtCodeSunat" class="col-sm-4 col-form-label">Familia:</label>
+					<label for="txtCodeSunat" class="col-sm-4 col-form-label">Lineas:</label>
 					<div class="col-sm-8"> 
 						<select class="form-control" id="sltFamilias" onchange="cambiarFamilia()">
 							<?php include('php/optionFamilias.php'); ?>
@@ -134,7 +134,7 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 					</div>
 				</div>
 				<div class="form-group row">
-					<label for="txtCodeSunat" class="col-sm-4 col-form-label">Sub-Familia:</label>
+					<label for="txtCodeSunat" class="col-sm-4 col-form-label">Familias:</label>
 					<div class="col-sm-8"> 
 						<select class="form-control" id="sltSubFamilias">
 						</select>
@@ -287,6 +287,7 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 				<h5 class='modal-title'>Código Barras</h5>
 				<div class="card mt-2">
 					<div class="card-body p-3">
+						<label for="">Agregue un nuevo código</label>
 						<div class="input-group mb-3">
 							<input type="text" class="form-control" placeholder="Escanee el código" id="txtCodigoBarrita" autocomplete="off">
 							<div class="input-group-append">
@@ -468,6 +469,7 @@ $('#btnUpdateStock').click(function() {
 		}}
 	});
 });
+$.indexGlobal = null;
 function verBarrasDe(idProd){ $.idProducto= idProd;
 	$.ajax({ url:'php/listarBarrasDe.php', type:"POST", data: { id: idProd}})
 	.done((resp)=>{
@@ -511,6 +513,8 @@ $('#btnAddBarrita').click(function() {
 			if(resp=='ok'){
 				alertify.message('<i class="icofont-warning-alt"></i> Guardado con éxito.');
 				$('#txtCodigoBarrita').val('').focus();
+				let stock = $(`tr[data-id='${$.idProducto}']`).find('.tdStock')
+				stock.text( parseInt(stock.text())+1 );
 				verBarrasDe($.idProducto);	
 			}else if(resp=='duplicado'){
 				alertify.error('<i class="icofont-warning-alt"></i> El código ya está registrado.').delay(15);

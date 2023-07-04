@@ -6,7 +6,12 @@ switch($_POST['accion']){
 	case 'abrirCaja': abrirCaja($datab); break;
 	case 'cerrarCaja': cerrarCaja($datab); break;
 	case 'verificarCaja': verificarCaja($datab); break;
+	case 'pedir1Caja': pedir1Caja($datab); break;
 	case 'datosDeCaja': datosDeCaja($datab); break;
+	case 'entradaEnCaja': entradaEnCaja($datab); break;
+	case 'salidaEnCaja': entradaEnCaja($datab); break;
+	case 'borrarRegistro': borrarRegistro($datab); break;
+	case 'buscarCajas': buscarCajas($datab); break;
 }
 
 function abrirCaja($db){
@@ -33,9 +38,24 @@ function cerrarCaja($db){
 
 function verificarCaja($db){
 	$filas = [];
-	$sql = "SELECT * FROM `caja` where abierto = 1 order by fechaApertura desc limit 1; ";
+	$sql = "SELECT c.*, u.usuNombres FROM `caja` c inner join usuario u on u.idUsuario = c.idUsuario where abierto = 1 order by fechaApertura desc limit 1; ";
 	$res = $db->prepare($sql);
 	$res -> execute();
+	while($row = $res -> fetch(PDO::FETCH_ASSOC)){
+		$filas[] = $row;
+	}
+	//echo $res->debugDumpParams();
+	if($res){
+		if ( count($filas) >0 ): echo json_encode( $filas, JSON_NUMERIC_CHECK );
+		else: echo json_encode(array( 'id' => -1, 'abierto'=>0 ));
+		endif;
+	}else echo 'error';
+}
+function pedir1Caja($db){
+	$filas = [];
+	$sql = "SELECT c.*, u.usuNombres FROM `caja` c inner join usuario u on u.idUsuario = c.idUsuario where id= ?; ";
+	$res = $db->prepare($sql);
+	$res -> execute([ $_POST['id'] ]);
 	while($row = $res -> fetch(PDO::FETCH_ASSOC)){
 		$filas[] = $row;
 	}
@@ -54,9 +74,70 @@ function datosDeCaja($db){
 	while($row = $resVentas -> fetch(PDO::FETCH_ASSOC)){
 		$ventas[] = $row;
 	}
+
+	$ingresos = [];
+	$sqlIngresos = "SELECT * FROM `caja_registros` WHERE `idCaja` = {$_POST['idCaja']} and idProceso in (9) and activo = 1 order by registro asc;";
+	$resIngresos = $db->prepare($sqlIngresos);
+	$resIngresos -> execute();
+	while($row = $resIngresos -> fetch(PDO::FETCH_ASSOC)){
+		$ingresos[] = $row;
+	}
+	
+	$salidas = [];
+	$sqlSalidas = "SELECT * FROM `caja_registros` WHERE `idCaja` = {$_POST['idCaja']} and idProceso in (10) and activo = 1 order by registro asc;";
+	$resSalidas = $db->prepare($sqlSalidas);
+	$resSalidas -> execute();
+	while($row = $resSalidas -> fetch(PDO::FETCH_ASSOC)){
+		$salidas[] = $row;
+	}
 	
 	//echo $res->debugDumpParams();
 	if($resVentas)
-		echo json_encode(array( 'ventas' => $ventas ));
+		echo json_encode(array( 'ventas' => $ventas, 'ingresos' => $ingresos, 'salidas' => $salidas ));
 	else echo 'error';
+}
+function entradaEnCaja($db){
+	$entrada = json_decode($_POST['entrada'], true) ;
+	
+	$sqlVentas = "INSERT INTO `caja_registros`(`idCaja`, `idProceso`, `descripcion`, `monto`) VALUES ( ?, ?, ?, ?)";
+	$resVentas = $db->prepare($sqlVentas);
+	$resVentas -> execute([
+		$_POST['idCaja'], $entrada['idProceso'], $entrada['descripcion'], $entrada['monto']
+	]);
+	
+	$idEntrada = $db->lastInsertId();
+	//echo $res->debugDumpParams();
+	if($resVentas)
+		echo json_encode(array( 'idEntrada' => $idEntrada ));
+	else echo 'error';
+}
+function borrarRegistro($db){
+	$entrada = json_decode($_POST['entrada'], true) ;
+	
+	$sqlVentas = "UPDATE `caja_registros` SET `activo` = '0' WHERE `id` = ? ;	";
+	$resVentas = $db->prepare($sqlVentas);
+	$resVentas -> execute([
+		$_POST['id']
+	]);
+	
+	//echo $res->debugDumpParams();
+	if($resVentas)
+		echo 'ok';
+	else echo 'error';
+}
+function buscarCajas($db){
+	$filas = [];
+	$sql = "SELECT c.*, u.usuNombres FROM `caja` c
+	inner join usuario u on u.idUsuario = c.idUsuario where date_format(fechaApertura, '%Y-%m-%d') = ? order by id asc; ";
+	$res = $db->prepare($sql);
+	$res -> execute([ $_POST['fecha'] ]);
+	while($row = $res -> fetch(PDO::FETCH_ASSOC)){
+		$filas[] = $row;
+	}
+	//echo $res->debugDumpParams();
+	if($res){
+		if ( count($filas) >0 ): echo json_encode( $filas, JSON_NUMERIC_CHECK );
+		else: echo json_encode(array( 'id' => -1, 'abierto'=>0 ));
+		endif;
+	}else echo 'error';
 }

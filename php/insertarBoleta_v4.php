@@ -136,7 +136,7 @@ for ($i=0; $i < count($productos) ; $i++) {
 			 $_POST['proceso']='3';
 			 $_POST['cantidad']=$canti;
 			 $_POST['obs']='';
-			 require 'updateStock.php';
+			 if( $soy <> "PROFORMA" ) require 'updateStock.php';
 		 }
 
 		// echo $sqlProd;

@@ -257,9 +257,9 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 				$('#modalCoincidencias').modal('hide')
 				this.texto='';
 				if(tipo=='producto')
-					this.cesta.push({cantidad: 1, nombre: this.productosNombre[index].prodDescripcion, barras:[], stock: this.productosNombre[index].prodStock, id: this.productosNombre[index].idProductos, marca: this.productosNombre[index].marca, linea: this.productosNombre[index].linea, series: this.productosNombre[index].series, precio: this.productosNombre[index].precioCompra })
+					this.cesta.push({cantidad: 1, nombre: this.productosNombre[index].prodDescripcion, barras:[], stock: this.productosNombre[index].prodStock, id: this.productosNombre[index].idProductos, marca: this.productosNombre[index].marca, linea: this.productosNombre[index].linea, series: this.productosNombre[index].series, precioCompra: this.productosNombre[index].precioCompra })
 				if(tipo=='serie')
-					this.cesta.push({cantidad: 1, nombre: this.productosSerie[index].prodDescripcion, barras:[], stock: this.productosSerie[index].prodStock, id: this.productosSerie[index].idProductos, marca: this.productosSerie[index].marca, linea: this.productosSerie[index].linea, series: this.productosSerie[index].series, precio: this.productosSerie[index].precioCompra })
+					this.cesta.push({cantidad: 1, nombre: this.productosSerie[index].prodDescripcion, barras:[], stock: this.productosSerie[index].prodStock, id: this.productosSerie[index].idProductos, marca: this.productosSerie[index].marca, linea: this.productosSerie[index].linea, series: this.productosSerie[index].series, precioCompra: this.productosSerie[index].precioCompra })
 				
 			},
 			checkVacios(){

@@ -256,9 +256,9 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 				.then(resp=> this.usuarios = resp )
 			},
 			async registrarRecepcion(){
-				if(this.recepcion.marca =='') alertify.error('<i class="bi bi-exclamation-diamond-fill"></i> debe rellenarse la marca').delay(15);
-				else if(this.recepcion.modelo =='') alertify.error('<i class="bi bi-exclamation-diamond-fill"></i> debe rellenarse el modelo').delay(15);
-				else if(this.recepcion.estado =='') alertify.error('<i class="bi bi-exclamation-diamond-fill"></i> debe rellenarse el estado').delay(15);
+				if(this.recepcion.marca =='') alertify.error('<i class="bi bi-exclamation-diamond-fill"></i> Debe rellenarse la marca').delay(15);
+				else if(this.recepcion.modelo =='') alertify.error('<i class="bi bi-exclamation-diamond-fill"></i> Debe rellenarse el modelo').delay(15);
+				else if(this.recepcion.estado =='') alertify.error('<i class="bi bi-exclamation-diamond-fill"></i> Debe rellenarse el estado').delay(15);
 				else{
 					//guardar
 					let datos = new FormData();

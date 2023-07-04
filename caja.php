@@ -42,6 +42,7 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 					<div class="col-12 col-md-6 form-inline my-2">
 						<label class="my-1 mr-2" for="">Fecha: </label>
 						<input type="date" class="form-control" id="txtFecha" v-model="fecha">
+						<button class="btn btn-outline-primary ml-2" @click="buscarCajas()"><i class="icofont-search-1"></i></button>
 					</div>
 					<div class="col-12 col-md-3 d-flex justify-content-end my-2" v-if="caja.abierto == 0">
 						<button class="btn btn-outline-primary " data-toggle="modal" data-target="#modalAbrirCaja"><i class="icofont-box"></i> Abrir Caja</button>
@@ -52,9 +53,35 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 					
 				</div>
 			</div>
+			<div class="card my-3" v-if="caja.abierto == 1">
+				<div class="card-body row">
+					<div class="col-12 col-md-3 my-2" >
+						<p class="mb-0 font-weight-bold">Usuario:</p>
+						<p class="mb-0">{{caja.usuNombres}}</p>
+					</div>
+					<div class="col-12 col-md-3 my-2" >
+						<p class="mb-0 font-weight-bold">Apertura:</p>
+						<p class="mb-0">S/ {{parseFloat(caja.apertura).toFixed(2)}}</p>
+					</div>
+					<div class="col-12 col-md-3 my-2" >
+						<p class="mb-0 font-weight-bold">Cierre:</p>
+						<p class="mb-0">S/ {{parseFloat(caja.cierre).toFixed(2)}}</p>
+					</div>
+					<div class="col-12 col-md-3 my-2" >
+						<p class="mb-0 font-weight-bold">Estado:</p>
+						<p class="mb-0">
+							<span v-if="caja.abierto=='1'">Abierto</span>
+							<span v-if="caja.abierto=='0'">Cerrado</span>
+						</p>
+					</div>
+					
+					
+				</div>
+			</div>
+
 	
-			<span class="badge badge-pill badge-primary px-3 py-2">Entradas de dinero</span>
-			<div class="table-responsive">
+			<span class="badge badge-pill badge-secondary px-3 py-2">Entradas de dinero</span>
+			<div class="table-responsive mb-4">
 				<table class="table table-hover mt-3" id="tlbProductosTodos">
 					<thead>
 						<tr>
@@ -74,8 +101,78 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 							<td>+ S/ {{ parseFloat(venta.totalFinal).toFixed(2) }}</td>
 						</tr>
 					</tbody>
+					<tfoot>
+						<tr>
+							<th class="text-right" colspan=3></th>
+							<th>S/ {{sumaVentas}}</th>
+						</tr>
+					</tfoot>
 				</table>
 			</div>
+
+			
+			<span v-if="caja.abierto==1" class="badge badge-pill badge-primary px-3 py-2">Entradas extras de dinero</span> <a href="#!" @click="entrada.idProceso = 9" class="badge badge-pill badge-success px-3 py-2" data-toggle="modal" data-target="#entradaCaja"><i class="icofont-ui-add"></i>  Agregar nuevo registro</a> 
+			<div class="table-responsive mb-4">
+				<table class="table table-hover mt-3" id="tlbProductosTodos">
+					<thead>
+						<tr>
+							<th>N°</th>
+							<th>Detalle</th>
+							<th>Monto</th>
+							<th>@</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for="(ingreso, index) in registros.ingresos">
+							<td>{{ index+1 }}</td>
+							<td class="text-capitalize">{{ ingreso.descripcion }}</td>
+							<td>{{ parseFloat(ingreso.monto).toFixed(2) }}</td>
+							<td><button class="btn btn-outline-danger" @click="borrarEntrada(ingreso.id, 'ingreso', index)"><i class="icofont-ui-delete"></i></button></td>
+						</tr>
+						<tr v-if="registros.ingresos.length == 0">
+							<td colspan="4">No hay datos registrados en ingresos de dinero</td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<th class="text-right" colspan=2></th>
+							<th>S/ {{sumaIngresos}}</th>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+
+			<span v-if="caja.abierto==1" class="badge badge-pill badge-danger px-3 py-2">Salidas extras de dinero</span> <a href="#!" @click="entrada.idProceso = 10" class="badge badge-pill badge-success px-3 py-2" data-toggle="modal" data-target="#salidaCaja"><i class="icofont-ui-add"></i>  Agregar nuevo registro</a> 
+			<div class="table-responsive mb-4">
+				<table class="table table-hover mt-3" id="tlbProductosTodos">
+					<thead>
+						<tr>
+							<th>N°</th>
+							<th>Detalle</th>
+							<th>Monto</th>
+							<th>@</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for="(salida, index) in registros.salidas">
+							<td>{{ index+1 }}</td>
+							<td class="text-capitalize">{{ salida.descripcion }}</td>
+							<td>{{ parseFloat(salida.monto).toFixed(2) }}</td>
+							<td><button class="btn btn-outline-danger" @click="borrarEntrada(salida.id, 'salida', index)"><i class="icofont-ui-delete"></i></button></td>
+						</tr>
+						<tr v-if="registros.salidas.length == 0">
+							<td colspan="4">No hay datos registrados en salidas de dinero</td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<th class="text-right" colspan=2></th>
+							<th>S/ {{sumaSalidas}}</th>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+
 		</div>
 	</section>
 
@@ -107,6 +204,95 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 				</div>
 			</div>
 		</div>
+		<!-- Modal -->
+		<div class="modal fade" id="entradaCaja" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">Ingreso de dinero</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<label for="">Monto S/</label>
+						<input type="number" class="form-control" v-model="entrada.monto">
+						<label for="">Observaciones</label>
+						<input type="text" class="form-control" v-model="entrada.descripcion">
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-outline-primary" @click="guardarEntrada();" data-dismiss="modal">Registrar entrada</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Modal -->
+		<div class="modal fade" id="salidaCaja" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">Salida de dinero</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<label for="">Monto S/</label>
+						<input type="number" class="form-control" v-model="entrada.monto">
+						<label for="">Observaciones</label>
+						<input type="text" class="form-control" v-model="entrada.descripcion">
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-outline-danger" @click="guardarSalida();" data-dismiss="modal">Registrar salida</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal fade" id="verCajas" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">Cajas encontradas</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<label for="">Para la fecha {{fechaLatam(fecha)}} escogida, se encontró</label>
+						
+						<table class="table table-sm">
+							<thead>
+								<tr>
+									<th>N°</th>
+									<th>Fecha y hora</th>
+									<th>Usuario</th>
+									<th>Apertura</th>
+									<th>Cierre</th>
+									<th>Estado</th>
+									<th>@</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr v-for="(cuadre, index) in cuadres">
+									<td>{{index+1}}</td>
+									<td>{{menos1Hora(cuadre.fechaApertura)}}</td>
+									<td>{{cuadre.usuNombres}}</td>
+
+									<td>{{parseFloat(cuadre.apertura).toFixed(2)}}</td>
+									<td>{{parseFloat(cuadre.cierre).toFixed(2)}}</td>
+									<td>
+										<span v-if="cuadre.abierto ==0">Cerrado</span>
+										<span v-if="cuadre.abierto ==1">Abierto ahora</span>
+									</td>
+									<td><button class="btn btn-sm btn-outline-primary" @click="pedir1Caja(cuadre.id)" data-dismiss="modal">Ver</button></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
 	</section>
 </div>
 
@@ -127,7 +313,8 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 	createApp({
 		data() {
 			return {
-				fecha: moment().format('YYYY-MM-DD'), caja:{abierto:0}, apertura:0, observacion:'', registros:[]
+				fecha: moment().format('YYYY-MM-DD'), caja:{abierto:0}, apertura:0, observacion:'', registros:{ingresos:{}, salidas:{}, ventas:{}}, entrada: { idProceso: -1, monto: 0, descripcion:''},
+				ventas:[], cuadres:[]
 			}
 		},
 		mounted(){
@@ -137,6 +324,22 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 			async verificarCaja(){
 				let datos = new FormData();
 				datos.append('accion', 'verificarCaja')
+				await fetch('php/caja.php',{
+					method:'POST', body:datos
+				})
+				.then(serv => serv.json())
+				.then(resp => {
+					if(resp.length ==1 ){
+						this.caja = resp[0]
+						this.fecha = moment(this.caja.fechaApertura).format('YYYY-MM-DD')
+						this.datosDeCaja();
+					}
+				})
+			},
+			async pedir1Caja(id){
+				let datos = new FormData();
+				datos.append('accion', 'pedir1Caja')
+				datos.append('id', id)
 				await fetch('php/caja.php',{
 					method:'POST', body:datos
 				})
@@ -171,7 +374,11 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 					method:'POST', body:datos
 				})
 				.then(serv => serv.json())
-				.then(resp => {this.registros = resp; console.log(resp)} )
+				.then(resp => {
+					this.registros.ventas = resp.ventas;
+					this.registros.ingresos = resp.ingresos;
+					this.registros.salidas = resp.salidas;
+					console.log(resp)} )
 			},
 			async cerrarCaja(){
 				let datos = new FormData();
@@ -183,7 +390,107 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 					method:'POST', body:datos
 				})
 				.then(serv => serv.json())
-				.then(resp => this.caja = resp )
+				.then(resp => {this.caja = resp; location.reload()} )
+			},
+			async guardarEntrada(){
+				let datos = new FormData();
+				datos.append('accion', 'entradaEnCaja')
+				datos.append('idCaja', this.caja.id);
+				datos.append('entrada', JSON.stringify(this.entrada));
+				await fetch('php/caja.php',{
+					method:'POST', body:datos
+				})
+				.then(serv => serv.json())
+				.then(resp => {
+					console.log(resp)
+					if(resp.idEntrada) this.registros.ingresos.push({idEntrada: resp.idProceso,
+						monto: this.entrada.monto,
+						descripcion: this.entrada.descripcion,
+						idProceso: this.entrada.idProceso
+					})
+				})
+			},
+			async guardarSalida(){
+				let datos = new FormData();
+				datos.append('accion', 'salidaEnCaja')
+				datos.append('idCaja', this.caja.id);
+				datos.append('entrada', JSON.stringify(this.entrada));
+				await fetch('php/caja.php',{
+					method:'POST', body:datos
+				})
+				.then(serv => serv.json())
+				.then(resp => {
+					console.log(resp)
+					if(resp.idEntrada) this.registros.salidas.push({idEntrada: resp.idProceso,
+						monto: this.entrada.monto,
+						descripcion: this.entrada.descripcion,
+						idProceso: this.entrada.idProceso
+					})
+				})
+			},
+			async borrarEntrada(id, tipo, index){
+				if(confirm('¿Está seguro que desea borrar este registro?')){
+					let datos = new FormData();
+					datos.append('accion', 'borrarRegistro')
+					datos.append('id', id);
+					await fetch('php/caja.php',{
+						method:'POST', body:datos
+					})
+					.then(serv => serv.text())
+					.then(resp => {
+						console.log(resp)
+						if(resp =='ok') 
+							if(tipo =='ingreso') this.registros.ingresos.splice(index, 1)
+							if(tipo =='salida') this.registros.salidas.splice(index, 1)
+					})
+				}
+			},
+			async buscarCajas(){
+				let datos = new FormData();
+				datos.append('accion', 'buscarCajas')
+				datos.append('fecha', this.fecha);
+				await fetch('php/caja.php',{
+					method:'POST', body:datos
+				})
+				.then(serv => serv.json())
+				.then(resp => {
+					console.log(resp)
+					this.cuadres = resp
+					$('#verCajas').modal('show')
+					
+				})
+			},
+			fechaLatam(fechita){
+				return moment(fechita, 'YYYY-MM-DD').format('DD/MM/YYYY')
+			},
+			menos1Hora(fechita){
+				return moment(fechita).subtract(1, 'hour').format('DD/MM/YYYY hh:mm a')
+			}
+		},
+		computed:{
+			sumaVentas(){
+				let suma = 0;
+				if( Array.isArray(this.registros.ventas) )
+					this.registros.ventas.forEach(elemento => {
+						suma += parseFloat(elemento.totalFinal)
+					});
+				return suma.toFixed(2)
+			},
+			sumaSalidas(){
+				let suma = 0;
+				if( Array.isArray(this.registros.salidas) )
+					this.registros.salidas.forEach(elemento => {
+						suma += parseFloat(elemento.monto)
+					});
+				return suma.toFixed(2)
+			},
+			sumaIngresos(){
+				let suma = 0;
+				if( Array.isArray(this.registros.ingresos) )
+					this.registros.ingresos.forEach(elemento => {
+						suma += parseFloat(elemento.monto)
+					});
+				return suma.toFixed(2)
 			},
 			
 		}
