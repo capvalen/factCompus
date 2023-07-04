@@ -30,11 +30,12 @@ while($row=$resultado->fetch_assoc()){
 		<td class="tdGrabado <?= ($_COOKIE['facCambiarGravado']==0 ? 'd-none': '') ?>" data-value="<?= $row['idGravado'];?>"><?= $row['gravDescripcion']; ?></td>
 		<td class="<?= ($_COOKIE['facCambiarUnidad']==0 ? 'd-none': '') ?>"><?= $row['undDescipcion']; ?></td>
 		<!-- <td><?= $row['estActivo']; ?></td> -->
+		<td class="d-none similares"><?= $row['similares']?></td>
 		<td>
+			<button class="btn btn-outline-primary btn-sm border border-light btnEditProducto" data-toggle="tooltip" data-placement="top" data-original-title="Editar Producto"><i class="icofont-edit"></i></button>
+			<button class="btn btn-outline-success btn-sm border border-light btnBarras" onclick="verBarrasDe(<?= $row['idProductos']; ?>)" data-toggle="tooltip" data-placement="top" data-original-title="Código de barras"><i class="icofont-barcode"></i></button>
 			<?php if($_COOKIE['ckPower']==1){?>
-			<button class="btn btn-outline-primary btn-sm border border-light btnEditProducto" data-toggle="tooltip" data-placement="top" title="" data-original-title="Editar Producto"><i class="icofont-edit"></i></button>
-			<button class="btn btn-outline-dark btn-sm border border-light btnStockProducto" data-toggle="tooltip" data-placement="top" title="" data-original-title="Modificar Stock"><i class="icofont-inbox"></i></button>
-			<button class="btn btn-outline-success btn-sm border border-light btnBarras" onclick="verBarrasDe(<?= $row['idProductos']; ?>)" data-toggle="tooltip" data-placement="top" title="" data-original-title="Código de barras"><i class="icofont-barcode"></i></button>
+			<button class="btn btn-outline-dark btn-sm border border-light btnStockProducto" data-toggle="tooltip" data-placement="top" data-original-title="Modificar Stock"><i class="icofont-inbox"></i></button>
 			<?php }?>
 		</td>
 	</tr>

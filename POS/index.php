@@ -196,12 +196,43 @@
 						<label for="">Cantidad</label>
 						<input type="number" class="form-control mb-2" v-on:keyup.enter="actualizarProducto()" v-if="canasta.length>0 && idProducto>=0" v-model="canasta[idProducto].cantidad" min="1" >
 						<div >
-							<label for="">Precio</label>
-							<select name="" id="sltPreciosEspeciales" class="form-control" @change="precioDe">
+							<label for="">Precios disponibles</label>
+							<table>
+								<thead>
+									<tr>
+										<th>Tipo</th>
+										<th>Monto</th>
+										<th>@</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr >
+										<td>Libre</td>
+										<td><input type="number" min=0 step=1 value=0 v-model="librePrecio" class="form-control"></td>
+										<td><button class="btn btn-outline-success btn-sm" title="Aplicar" @click="precioDe(librePrecio)" data-dismiss="modal"><i class="bi bi-caret-right"></i></button></td>
+									</tr>
+									<tr v-if="preciosEspeciales.normal>0">
+										<td>Normal</td>
+										<td>{{parseFloat(preciosEspeciales.normal).toFixed(2)}}</td>
+										<td><button class="btn btn-outline-success btn-sm" title="Aplicar" @click="precioDe(preciosEspeciales.normal)" data-dismiss="modal"><i class="bi bi-caret-right"></i></button></td>
+									</tr>
+									<tr v-if="preciosEspeciales.descuento>0">
+										<td>Con descuento</td>
+										<td>{{parseFloat(preciosEspeciales.descuento).toFixed(2)}}</td>
+										<td><button class="btn btn-outline-success btn-sm" title="Aplicar" @click="precioDe(preciosEspeciales.descuento)" data-dismiss="modal"><i class="bi bi-caret-right"></i></button></td>
+									</tr>
+									<tr v-if="preciosEspeciales.mayor>0">
+										<td>Por mayor</td>
+										<td>{{parseFloat(preciosEspeciales.mayor).toFixed(2)}}</td>
+										<td><button class="btn btn-outline-success btn-sm" title="Aplicar" @click="precioDe(preciosEspeciales.mayor)" data-dismiss="modal"><i class="bi bi-caret-right"></i></button></td>
+									</tr>
+								</tbody>
+							</table>
+							<!-- <select name="" id="sltPreciosEspeciales" class="form-control" @change="precioDe">
 								<option :value="preciosEspeciales.normal" v-if="preciosEspeciales.normal>0">Normal</option>
 								<option :value="preciosEspeciales.descuento" v-if="preciosEspeciales.descuento>0">Con descuento</option>
 								<option :value="preciosEspeciales.mayor" v-if="preciosEspeciales.mayor>0">Por mayor</option>
-							</select>
+							</select> -->
 						</div>
 						<div class='d-flex justify-content-between mt-3'>
 							<button type='button' class='btn btn-outline-danger btn-sm' data-dismiss="modal" @click="retirarProducto()"><i class="bi bi-arrow-90deg-left"></i> Retirar</button>
@@ -265,7 +296,7 @@
 				cliRuc: '00000000'
 			}],
 			clienteActual:{dni: '00000000', razon: 'Cliente simple', idCliente:1, tipo:'persona', direccion:''},
-			modoCliente:null, idProducto:-1, preciosEspeciales:[],
+			modoCliente:null, idProducto:-1, preciosEspeciales:[], librePrecio:0, queMonto:0,
 			canasta:[], impresionTicket:true, separados:[],
 			productos:[],productosNombre:[],productosSerie:[],
 		},
@@ -443,6 +474,7 @@
 						unidad: 'Und.',
 						unidadSunat: 'NIU',
 						precio: this.productosNombre[0].prodPrecio,
+						normal: this.productosNombre[0].prodPrecio,
 						mayor: this.productosNombre[0].prodPrecioMayor,
 						descuento: this.productosNombre[0].prodPrecioDescto,
 						afecto: this.productosNombre[0].idGravado,
@@ -461,6 +493,7 @@
 						unidad: 'Und.',
 						unidadSunat: 'NIU',
 						precio: this.productosNombre[item].prodPrecio,
+						normal: this.productosNombre[item].prodPrecio,
 						mayor: this.productosNombre[item].prodPrecioMayor,
 						descuento: this.productosNombre[item].prodPrecioDescto,
 						afecto: this.productosNombre[item].idGravado,
@@ -679,7 +712,7 @@
 				this.idProducto=item;
 				$('#queEdito').text(this.canasta[item].nombre);
 				$('#txtPrecioProducto').text(parseFloat(this.canasta[item].precio).toFixed(2));
-				this.preciosEspeciales = {normal:this.canasta[item].precio, mayor: this.canasta[item].mayor, descuento:  this.canasta[item].descuento };
+				this.preciosEspeciales = {normal:this.canasta[item].normal, mayor: this.canasta[item].mayor, descuento:  this.canasta[item].descuento };
 				$('#modalEditarProducto').modal('show');
 				
 			},
@@ -687,11 +720,17 @@
 				this.canasta.splice(this.idProducto, 1)
 			},
 			actualizarProducto(){
-				this.canasta[this.idProducto].precio = $('#sltPreciosEspeciales').val();
+				//this.canasta[this.idProducto].precio = this.queMonto;
 				this.canasta[this.idProducto].subTotal = this.canasta[this.idProducto].precio * this.canasta[this.idProducto].cantidad;
+				this.queMonto=0;
 			},
-			precioDe(){
-				$('#txtPrecioProducto').text( parseFloat($('#sltPreciosEspeciales').val()).toFixed(2) );
+			precioDe(monto){
+				if (monto<0) monto = 0
+				this.canasta[this.idProducto].precio = parseFloat(monto);
+				//$('#txtPrecioProducto').text( parseFloat($('#sltPreciosEspeciales').val()).toFixed(2) );
+				$('#txtPrecioProducto').text( parseFloat(monto).toFixed(2) );
+				this.librePrecio =0;
+				this.actualizarProducto();
 			},
 			limpiarTodo(){
 				this.cliBuscar= '';

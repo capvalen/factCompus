@@ -385,6 +385,8 @@ $('table').on('click', '.btnEditProducto', function (e) {
 	$('#sltFiltroGravado').selectpicker('val',padre.find('.tdGrabado').attr('data-value'));
 	$('#sltFiltroUnidades').selectpicker('val',padre.attr('data-und'));
 	$('#btnUpdateProduct').attr('data-id', padre.attr('data-id'));
+	$('#txtSimilaresEdit').val( padre.find('.similares').text());
+	
 	$('#modalEditarProducto').modal('show');
 
 	// var queProd= $(this).selectpicker('val');
