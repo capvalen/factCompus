@@ -99,7 +99,11 @@
 								<option value="-1">Proforma</option>
 							</select>
 						</div>
-						<label><input type="checkbox" id="chkImprimir" v-model="impresionTicket"> <span v-if="impresionTicket">Imprimir ticket</span> <span v-else>Sin impresión</span></label><br>
+						<div class="d-flex justify-content-between">
+							<label><input type="checkbox" id="chkImprimir" v-model="impresionTicket"> <span v-if="impresionTicket">Imprimir ticket</span> <span v-else>Sin impresión</span></label>
+							<label><input type="checkbox" id="chkImprimir" v-model="pagarTotal"> <span v-if="pagarTotal">Pago total</span> <span v-else>No dar crédito</span></label>
+						</div>
+						<br>
 					</div>
 					<div class="col ">
 						<?php if($cajaAbierta['abierto']==1): ?>
@@ -107,6 +111,22 @@
 						<?php endif; ?>
 					</div>
 				</div>
+				<div class="row mb-3" v-if="!pagarTotal">
+					<div class="col">
+						<button class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#modalAddCredito"> <i class="bi bi-bar-chart-steps"></i> Agregar fecha de crédito</button>
+					</div>
+				</div>
+				<section class="mb-3 row" v-if="creditos.length>0 && !pagarTotal">
+					<div class="col-8 mx-auto">
+						<p class="mb-0 text-muted">Créditos</p>
+						<ul class="list-group ">
+							<li class="list-group-item d-flex justify-content-between align-items-center p-2" v-for="(nCredito, nIndex) in creditos">
+								<span><strong>Fecha {{nIndex+1}}:</strong> {{fechaLatam(nCredito.fecha)}} con el  monto: S/ {{parseFloat(nCredito.monto).toFixed(2)}}</span>
+								<button class="btn btn-sm border-0 btn-outline-danger" @click="creditos.splice(nIndex, 1)"><i class="bi bi-eraser"></i></button>
+							</li>
+						</ul>
+					</div>
+				</section>
 				<?php if($cajaAbierta['abierto']==0): ?>
 				<div class="row">
 					<div class="col">
@@ -119,6 +139,7 @@
 					</div>
 				</div>
 				<?php endif; ?>
+				
 				
 			
 				<p class="mb-1"><i class="bi bi-upc-scan"></i> Escanee o haga una búsqueda:</p>
@@ -276,6 +297,28 @@
 			</div>
 		</div>
 
+		<!-- Modal para ingresar creditos-->
+		<div class="modal fade" id="modalAddCredito" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">Nueva fecha de crédito</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<label for="">Monto</label>
+						<input type="number" step="0.1" min=0 class="form-control" v-model="credito.monto">
+						<label for="">Fecha de vencimiento</label>
+						<input type="date" class="form-control" v-model="credito.fecha">
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-outline-primary" @click="agregarFechaCredito()" data-dismiss="modal"><i class="bi bi-bar-chart-steps"></i> Ingresar fecha</button>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div> <!-- fin de app -->
 
 <script src="../js/jquery.min.js"></script>
@@ -289,7 +332,7 @@
 		el: '#app',
 		data: {
 			empresa:{ruc: ''},
-			cliBuscar: '', prodBuscar:'', tipoVenta:0, venta: 'Ticket interno', serie: null,
+			cliBuscar: '', prodBuscar:'', tipoVenta:0, venta: 'Ticket interno', serie: null, pagarTotal:true, credito:{monto:0, fecha: moment().add(1,'day').format('YYYY-MM-DD')}, creditos:[],
 			clientes: [{
 				idCliente: 1,
 				cliRazonSocial: 'Cliente simple',
@@ -664,7 +707,9 @@
 			},
 			guardar(){
 				let cabecera = { tipo: this.tipoVenta, serie: this.serie, fecha: moment().format('YYYY-MM-DD') }
-				axios.post('../php/insertarBoleta_v4.php', {empresa: this.empresa, cliente: this.clienteActual, cabecera: cabecera, jsonProductos: this.separados, idCaja: '<?= $cajaAbierta['id']?>'
+				axios.post('../php/insertarBoleta_v4.php', {empresa: this.empresa, cliente: this.clienteActual, cabecera: cabecera, jsonProductos: this.separados, idCaja: '<?= $cajaAbierta['id']?>',
+					pagoTotal: this.pagoTotal ? 1 : 0, //0 indica que se paga en partes
+					creditos: this.creditos
 				})
 				.then((response)=>{ console.log( response.data );
 					alertify.success('<i class="bi bi-check-circle"></i> Venta guardada').delay(15);
@@ -692,7 +737,7 @@
 							totalFinal: parseFloat(jTicket[0].totalFinal).toFixed(2),
 							productos: jTicket[1],
 							direccion:jTicket[0].direccion,
-							exonerado: parseFloat(jTicket[0].exonerado).toFixed(2),
+							exonerado: parseFloat(jTicket[0].exonerado).toFixed(2)
 							//placa: jTicket[0].placa,
 						}}).done(function(resp) {
 							console.log(resp)
@@ -756,7 +801,17 @@
 			},
 			limpiarLinea(index){
 				$('#tLineasSerie input').eq(index).val('').focus();
-			}
+			},
+			agregarFechaCredito(){
+				if( this.credito.fecha=='') alertify.error('<i class="bi bi-exclamation-diamond-fill"></i> La fecha ingresada no es válida').delay(15);
+				else if( this.credito.monto<= 0) alertify.error('<i class="bi bi-exclamation-diamond-fill"></i> El monto no puede ser 0 o menos').delay(15);
+				else{
+					this.creditos.push({fecha: this.credito.fecha, monto: this.credito.monto });
+				}
+			},
+			fechaLatam(fechita){
+				return moment(fechita, 'YYYY-MM-DD').format('DD/MM/YYYY')
+			},
 		},
 		computed:{
 			sumaTotal(){

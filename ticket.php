@@ -17,6 +17,10 @@ group by fd.idCabecera; ";
 $resultadoSeries=$esclavo->query($sqlSeries);
 $rowSeries=$resultadoSeries->fetch_assoc();
 
+$sqlCreditos = "SELECT c.*, date_format(c.fecha, '%d/%m/%Y') as fechaLatam FROM `creditos` c where idComprobante = {$rowSeries['idComprobante']};";
+$respCreditos = $esclavo->query($sqlCreditos);
+//echo 'cant. creditos son '. $respCreditos->num_rows; die();
+
 
 $caso = "-0{$rowSeries['factTipoDocumento']}-"; // 01 para factura, 03 para boleta
 
@@ -74,7 +78,7 @@ QRcode::png($codeContents, $tempDir.''.$filename.'.png', QR_ECLEVEL_L, 5);
 
 
 //Extraido de https://evilnapsis.com/2018/04/26/php-formato-de-ticket-basico-para-impresoras-de-tickets-con-fpdf/
-$pdf = new FPDF($orientation='P',$unit='mm', array(75, ( 20 * (5+$rowSeries['cantFilas']) )+ 60 )); //N° lineas * 6 + 60 espacio minimo //75 es los mm de ancho
+$pdf = new FPDF($orientation='P',$unit='mm', array(75, ( 20 * (5+$rowSeries['cantFilas']) + (5+$respCreditos->num_rows)  )+ 60 )); //N° lineas * 6 + 60 espacio minimo //75 es los mm de ancho
 $pdf->AddPage();
 $pdf->SetFont('Arial','B',10);    //Letra Arial, negrita (Bold), tam. 20
 $textypos = 5;
@@ -141,8 +145,18 @@ $pdf->SetFont('Arial','B', 9);
 $pdf->Cell( 0, $textypos, 'SubTotal: S/ ' . number_format($rowC['costoFinal'],2) , 0, 0, ); $pdf->Ln();
 $pdf->Cell( 0, $textypos, 'IGV: S/ ' . number_format($rowC['IGVFinal'],2) , 0, 0, ); $pdf->Ln();
 $pdf->Cell( 0, $textypos, 'Total: S/ ' . number_format($rowC['totalFinal'],2) , 0, 0, ); 
-$pdf->SetFont('Arial','', 9);
 $pdf->Ln(); $pdf->setX(2);
+
+$pdf->SetFont('Arial','B', 9);
+$c=1;
+if( $respCreditos->num_rows>0 ) $pdf->Cell( 0, $textypos, utf8_decode('Créditos: ') , 0, 0 , 'B'); $pdf->Ln();
+$pdf->SetFont('Arial','', 9);
+
+while( $rowCreditos = $respCreditos->fetch_assoc()){
+	$pdf->Cell( 0, $textypos, utf8_decode("{$c}° {$rowCreditos['fechaLatam']}. Monto: S/ " . number_format($rowCreditos['monto'],2)) , 0, 0 ); $pdf->Ln();
+	$c++;
+}
+$pdf->setX(2);
 $pdf->Cell( 0, $textypos, 'Son: ' . $letras); $pdf->Ln();
 $posX = $pdf->GetX();
 $posY = $pdf->GetY();

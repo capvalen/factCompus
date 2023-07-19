@@ -5,7 +5,7 @@ include __DIR__.'/../generales.php';
 require "../NumeroALetras.php";
 
 $_POST = json_decode(file_get_contents('php://input'),true); 
-//var_dump( $_POST);
+//var_dump( $_POST); die();
 
 
 /* Verifico si existe, el cliente, sino lo guardo */
@@ -137,6 +137,14 @@ for ($i=0; $i < count($productos) ; $i++) {
 			 $_POST['cantidad']=$canti;
 			 $_POST['obs']='';
 			 if( $soy <> "PROFORMA" ) require 'updateStock.php';
+		 }
+
+		 if( $_POST['pagoTotal']=='0' ){
+			for($j=0; $j< count( $_POST['creditos'] ); $j++){
+				$sqlCreditos = "INSERT INTO `creditos`(`idComprobante`, `fecha`, `monto`) VALUES ({$idCabecera}, '{$_POST['creditos'][$j]['fecha']}', {$_POST['creditos'][$j]['monto']})";
+				$esclavo->query($sqlCreditos);
+				//$esclavo->close();
+			}
 		 }
 
 		// echo $sqlProd;

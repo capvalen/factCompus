@@ -61,12 +61,13 @@ $nomArchivo = basename($_SERVER['PHP_SELF']); ?>
 				
 				</div>
 			</li>
-			<li class="nav-item dropdown <?php if( in_array($nomArchivo, ['reporte_compras.php', 'garantias.php', 'reportes.php', 'inventario-series.php', 'inventario-servicio.php']) ) echo 'active'; ?>">
+			<li class="nav-item dropdown <?php if( in_array($nomArchivo, ['reporte_compras.php', 'garantias.php', 'reportes.php', 'inventario-series.php', 'inventario-servicio.php', 'reporte_creditos.php']) ) echo 'active'; ?>">
 				<a class="nav-link dropdown-toggle" href="#!" id="navbarReportes" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<i class="icofont-paper"></i> Reportes
 				</a>
 				<div class="dropdown-menu" aria-labelledby="navbarReportes">
 					<a class="dropdown-item " href="reporte_compras.php" id=""><i class="icofont-paper"></i> Compras</a>
+					<a class="dropdown-item " href="reporte_creditos.php" id=""><i class="icofont-paper"></i> Créditos</a>
 					<a class="dropdown-item " href="garantias.php" id=""><i class="icofont-paper"></i> Garantias</a>
 					<a class="dropdown-item " href="inventario-series.php" id=""><i class="icofont-paper"></i> Inventario de series</a>
 					<a class="dropdown-item " href="inventario-servicio.php" id=""><i class="icofont-paper"></i> Reportes servicio tec.</a>

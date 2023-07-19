@@ -10,6 +10,7 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 <head>
 	<title>Facturador electrónico - Desarrollado por: Infocat Soluciones</title>
 	<?php include 'headers.php'; ?>
+	<link rel="stylesheet" href="css/alertify.min.css">
 
 </head>
 <body>
@@ -404,6 +405,68 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 		</div>
 	</div>
 </div>
+<!-- Modal para empezar Compartir en PC -->
+<div class="modal fade" id="modalCompartirPc" tabindex="-1" role="dialog">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Compartir comprobante</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<label for="">Elija la modalidad para compartir</label>
+				<div class="accordion" id="accordionExample">
+					<div class="card">
+						<div class="card-header" id="headingOne">
+							<h2 class="mb-0 d-flex justify-content-between" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" style="cursor:pointer; color: #6a6a6a;">
+								<button class="btn btn-link btn-block text-left" type="button" >
+									<i class="icofont-mail"></i> Por Correo electrónico
+								</button>
+								<i class="icofont-rounded-down"></i>
+							</h2>
+						</div>
+
+						<div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+							<div class="card-body">
+								<div class="input-group">
+									<input type="mail" class="form-control">
+									<div class="input-group-append">
+										<button class="btn btn-outline-secondary" type="button" id="button-addon2"><i class="icofont-share-alt"></i> Enviar</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="card">
+						<div class="card-header" id="headingTwo">
+							<h2 class="mb-0" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="cursor:pointer; color: #6a6a6a;">
+								<button class="btn btn-link btn-block text-left collapsed" type="button" >
+									<i class="icofont-brand-whatsapp"></i> Por Whatsapp
+								</button>
+							</h2>
+						</div>
+						<div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+							<div class="card-body">
+								<div class="input-group">
+									<input type="text" class="form-control">
+									<div class="input-group-append">
+										<button class="btn btn-outline-secondary" type="button" id="button-addon2"><i class="icofont-share-alt"></i> Enviar</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<p class="text-danger d-none" id="pError3"></p>
+				<button type="button" class="btn btn-primary" id="btnUpdatePrecios"><i class="icofont-refresh"></i> Actualizar precios</button>
+			</div>
+		</div>
+	</div>
+</div>
 <?php if($_COOKIE['ckPower']==1){ ?>
 <!-- Modal para confirmar la Baja -->
 <div class="modal fade" id="modalDarBajas" tabindex="-1" role="dialog">
@@ -469,10 +532,11 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 <script src="js/jquery.min.js"></script>
 <script src="js/popper.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
-<script src="js/impotem.js?version=1.0.15"></script>
+<script src="js/impotem.js?version=1.0.16"></script>
 <script src="js/moment.js"></script>
 <script src="js/bootstrap-select.js"></script>
 <script src="js/stupidtable.js"></script>
+<script src="js/alertify.min.js"></script>
 
 <script>
 $(document).ready(function(){
@@ -1334,6 +1398,29 @@ function transformar(){
 		location.reload();
 	});
 }
+$.serie='', $.correlativo='';
+function compartir(serie, correlativo){
+	// Verificamos si el navegador tiene soporte para el API compartir
+	if ('share' in navigator) {
+		navigator.share({
+			title: "Contenido",
+			text: `Su Comprobante ${serie}-${correlativo} puede ser revisado online`,
+			url: `./printComprobanteA4.php?serie=${serie}&correlativo=${correlativo}`
+		})
+		// Mensaje en Consola cuando se presiona el botón de compartir 
+		.then(() => {
+			console.log("Contenido Compartido!");
+		})
+		.catch(console.error);
+	} else {
+		// Si el navegador no tiene soporte para la API compartir, le enviamos un mensaje al usuario
+		alert('Lo siento, este navegador no tiene soporte para recursos compartidos.')
+	}
+}
+function compartirPc(serie, correlativo){
+	$.serie= serie;
+	$.correlativo = correlativo;
+}
 
 
 <?php if($_COOKIE['ckPower']==1){ ?>
@@ -1404,22 +1491,21 @@ function borrarDefinitivamente(){
 		}
 	});
 }
-function compartir(serie, correlativo){ 
-	// Verificamos si el navegador tiene soporte para el API compartir
-	if ('share' in navigator) {
-		navigator.share({
-			title: "Contenido",
-			text: `Su Comprobante ${serie}-${correlativo} puede ser revisado online`,
-			url: `./printComprobanteA4.php?serie=${serie}&correlativo=${correlativo}`
+async function clavePersonal(id){
+	let clave = prompt('Ingrese la nueva clave a asignar:');
+	if(clave){
+		let datos = new FormData();
+		datos.append('id', id)
+		datos.append('clave', clave)
+		let servidor = await fetch('php/cambiarClave.php', {
+			method:'POST', body:datos
 		})
-		// Mensaje en Consola cuando se presiona el botón de compartir 
-		.then(() => {
-			console.log("Contenido Compartido!");
-		})
-		.catch(console.error);
-	} else {
-		// Si el navegador no tiene soporte para la API compartir, le enviamos un mensaje al usuario
-		alert('Lo siento, este navegador no tiene soporte para recursos compartidos.')
+		const respuesta = await servidor.text();
+		if( respuesta == 'todo ok'){
+			alertify.notify('<i class="icofont-check"></i> Clave actualizada', 'success', 5);
+		}else{
+			alertify.notify('<i class="icofont-close"></i> Hubo un problema actualizando', 'danger', 5);
+		}
 	}
 }
 

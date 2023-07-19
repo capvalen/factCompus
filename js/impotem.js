@@ -45,6 +45,7 @@ function removerPersonal(idEmple){
 	$('#modalBorrarPersonal').modal('show');
 }
 $('#btnBorrarPersona').click(function() {
+	console.log('pre-borrar');
 	$.ajax({url: 'php/borrarPersonal.php', type: 'POST', data: { idUser: $.idEmple }}).done(function(resp) {
 		if($.trim(resp)=='todo ok'){
 			location.reload();

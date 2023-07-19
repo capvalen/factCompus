@@ -76,7 +76,7 @@ function datosDeCaja($db){
 	}
 
 	$ingresos = [];
-	$sqlIngresos = "SELECT * FROM `caja_registros` WHERE `idCaja` = {$_POST['idCaja']} and idProceso in (9) and activo = 1 order by registro asc;";
+	$sqlIngresos = "SELECT * FROM `caja_registros` WHERE `idCaja` = {$_POST['idCaja']} and idProceso in (7,9) and activo = 1 order by registro asc;";
 	$resIngresos = $db->prepare($sqlIngresos);
 	$resIngresos -> execute();
 	while($row = $resIngresos -> fetch(PDO::FETCH_ASSOC)){
@@ -112,7 +112,7 @@ function entradaEnCaja($db){
 	else echo 'error';
 }
 function borrarRegistro($db){
-	$entrada = json_decode($_POST['entrada'], true) ;
+	//$entrada = json_decode($_POST['entrada'], true) ;
 	
 	$sqlVentas = "UPDATE `caja_registros` SET `activo` = '0' WHERE `id` = ? ;	";
 	$resVentas = $db->prepare($sqlVentas);

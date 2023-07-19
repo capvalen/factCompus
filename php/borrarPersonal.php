@@ -1,6 +1,6 @@
 <?php 
-include "../conexion.php";
-$sql="UPDATE `usuarios` SET `usuEstadoActivo`=0 WHERE `idUsuario`= {$_POST['idUser']}";
+include "conexion.php";
+$sql="UPDATE `usuario` SET `usuActivo`=0 WHERE `idUsuario`= {$_POST['idUser']}";
 if($cadena->query($sql)){
    echo "todo ok";
 }else{

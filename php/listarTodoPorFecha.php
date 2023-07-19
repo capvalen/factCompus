@@ -100,6 +100,9 @@ while($row=$resultado->fetch_assoc()){
 				<button class="btn btn-outline-warning btn-sm border border-light " onclick="borrarExtra('<?= $row['idComprobante']?>')" data-toggle="tooltip" data-placement="top" title="Borrar interno"><i class="icofont-ui-rate-remove"></i></button>
 				<button class="btn btn-outline-primary btn-sm border border-light " onclick="prepararTransformacion('<?= $row['idComprobante']?>')" data-toggle="tooltip" data-placement="top" title="Convertir en..."><i class="icofont-stylish-up"></i></button>
 				<?php } ?>
+				<!-- Boton compartir -->
+				<button class="btn btn-outline-primary btn-sm border border-light " data-toggle="modal" data-target="#modalCompartirPc" onclick="compartirPc(`<?= $row['factSerie']?>`, `<?= $row['factCorrelativo'];?>`)" data-toggle="tooltip" data-placement="top" title="Compartir Pc"><i class="icofont-share"></i></button>
+					<!-- Fin Boton compartir -->
 			</td>
 		<?php } ?>
 	</tr>
