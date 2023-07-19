@@ -27,7 +27,7 @@ require "NumeroALetras.php";
 }
 </style>
 <div class="container">
-	<button class="btn btn-primary" id="btnPrimt">Imprimir Documento</button>
+	<button class="btn btn-primary d-print-none" id="btnPrimt">Imprimir Documento</button>
 <?php
 
 

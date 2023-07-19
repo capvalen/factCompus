@@ -12,6 +12,7 @@ switch($_POST['accion']){
 	case 'salidaEnCaja': entradaEnCaja($datab); break;
 	case 'borrarRegistro': borrarRegistro($datab); break;
 	case 'buscarCajas': buscarCajas($datab); break;
+	case 'cambiarMoneda': cambiarMoneda($datab); break;
 }
 
 function abrirCaja($db){
@@ -90,10 +91,18 @@ function datosDeCaja($db){
 	while($row = $resSalidas -> fetch(PDO::FETCH_ASSOC)){
 		$salidas[] = $row;
 	}
-	
+
+	$monedas = [];
+	$sqlMonedas= "SELECT * FROM `moneda` where idMoneda<> 2 order by monDescripcion";
+	$resMonedas = $db->prepare($sqlMonedas);
+	$resMonedas-> execute();
+	while($row = $resMonedas->fetch(PDO::FETCH_ASSOC)){
+		$monedas[] = $row;
+	}
+
 	//echo $res->debugDumpParams();
 	if($resVentas)
-		echo json_encode(array( 'ventas' => $ventas, 'ingresos' => $ingresos, 'salidas' => $salidas ));
+		echo json_encode(array( 'ventas' => $ventas, 'ingresos' => $ingresos, 'salidas' => $salidas, 'monedas' => $monedas ));
 	else echo 'error';
 }
 function entradaEnCaja($db){
@@ -140,4 +149,23 @@ function buscarCajas($db){
 		else: echo json_encode(array( 'id' => -1, 'abierto'=>0 ));
 		endif;
 	}else echo 'error';
+}
+function cambiarMoneda($db){
+	switch($_POST['tipo']){
+		case 'venta':
+			$sql = "UPDATE `fact_cabecera` SET `moneda` = ? WHERE idComprobante = ?;"; break;
+		case 'ingreso':
+			$sql = "UPDATE `caja_registros` SET `moneda` = ? WHERE id = ?;"; break;
+		case 'salida':
+			$sql = "UPDATE `caja_registros` SET `moneda` = ? WHERE id = ?;"; break;
+		default: break;
+	}
+	
+	$res = $db->prepare($sql);
+	$res -> execute([
+		$_POST['idMoneda'], $_POST['id']
+	]);
+	//echo $res->debugDumpParams();
+	if($res) echo 'ok';
+	else echo 'error';
 }

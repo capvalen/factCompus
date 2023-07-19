@@ -26,7 +26,7 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 <body>
 <?php include 'menu-wrapper.php'; ?>
 
-<div class="div" id="app">
+<div class="" id="app">
 	<section>
 		<div class="container-fluid mt-5 px-5">
 			<div class="row">
@@ -89,7 +89,7 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 							<th>Cliente</th>
 							<th>Comprobante</th>
 							<th>Monto</th>
-							<th>Obs.</th>
+							<th>Moneda</th>
 							<th>@</th>
 						</tr>
 					</thead>
@@ -99,12 +99,18 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 							<td>{{ venta.razonSocial }}</td>
 							<td>{{ venta.factSerie }}-{{ venta.factCorrelativo }}</td>
 							<td>+ S/ {{ parseFloat(venta.totalFinal).toFixed(2) }}</td>
+							<td>{{queMoneda(venta.moneda)}}</td>
+							<td> <button class="btn btn-sm btn-outline-primary" title="Cambiar moneda" @click="cambiarMoneda(venta.idComprobante, venta.moneda, index, 'venta')"><i class="icofont-exchange"></i></button> </td>
 						</tr>
 					</tbody>
 					<tfoot>
 						<tr>
-							<th class="text-right" colspan=3></th>
+							<th class="text-right" colspan=3>Total en efectivo</th>
 							<th>S/ {{sumaVentas}}</th>
+						</tr>
+						<tr v-show="sumaOtrosVentas>0">
+							<th class="text-right" colspan=3>Total en otros</th>
+							<th>S/ {{parseFloat(sumaOtrosVentas).toFixed(2)}}</th>
 						</tr>
 					</tfoot>
 				</table>
@@ -119,6 +125,7 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 							<th>N°</th>
 							<th>Detalle</th>
 							<th>Monto</th>
+							<th>Moneda</th>
 							<th>@</th>
 						</tr>
 					</thead>
@@ -127,6 +134,8 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 							<td>{{ index+1 }}</td>
 							<td class="text-capitalize">{{ ingreso.descripcion }}</td>
 							<td>{{ parseFloat(ingreso.monto).toFixed(2) }}</td>
+							<td>{{queMoneda(ingreso.moneda)}}</td>
+							<td> <button class="btn btn-sm btn-outline-primary" title="Cambiar moneda" @click="cambiarMoneda(ingreso.id, ingreso.moneda, index, 'ingreso')"><i class="icofont-exchange"></i></button> </td>
 							<td><button class="btn btn-outline-danger" @click="borrarEntrada(ingreso.id, 'ingreso', index)"><i class="icofont-ui-delete"></i></button></td>
 						</tr>
 						<tr v-if="registros.ingresos.length == 0">
@@ -135,8 +144,12 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 					</tbody>
 					<tfoot>
 						<tr>
-							<th class="text-right" colspan=2></th>
+							<th class="text-right" colspan=2>Total en efectivo</th>
 							<th>S/ {{sumaIngresos}}</th>
+						</tr>
+						<tr v-show="sumaOtrosIngresos>0">
+							<th class="text-right" colspan=2>Total en otros</th>
+							<th>S/ {{parseFloat(sumaOtrosIngresos).toFixed(2)}}</th>
 						</tr>
 					</tfoot>
 				</table>
@@ -150,6 +163,7 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 							<th>N°</th>
 							<th>Detalle</th>
 							<th>Monto</th>
+							<th>Moneda</th>
 							<th>@</th>
 						</tr>
 					</thead>
@@ -158,6 +172,8 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 							<td>{{ index+1 }}</td>
 							<td class="text-capitalize">{{ salida.descripcion }}</td>
 							<td>{{ parseFloat(salida.monto).toFixed(2) }}</td>
+							<td>{{queMoneda(salida.moneda)}}</td>
+							<td> <button class="btn btn-sm btn-outline-primary" title="Cambiar moneda" @click="cambiarMoneda(salida.id, salida.moneda, index, 'salida')"><i class="icofont-exchange"></i></button> </td>
 							<td><button class="btn btn-outline-danger" @click="borrarEntrada(salida.id, 'salida', index)"><i class="icofont-ui-delete"></i></button></td>
 						</tr>
 						<tr v-if="registros.salidas.length == 0">
@@ -166,8 +182,12 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 					</tbody>
 					<tfoot>
 						<tr>
-							<th class="text-right" colspan=2></th>
+							<th class="text-right" colspan=2>Total en efectivo</th>
 							<th>S/ {{sumaSalidas}}</th>
+						</tr>
+						<tr v-show="sumaOtrosSalidas>0">
+							<th class="text-right" colspan=2>Total en otros</th>
+							<th>S/ {{parseFloat(sumaOtrosSalidas).toFixed(2)}}</th>
 						</tr>
 					</tfoot>
 				</table>
@@ -292,7 +312,30 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 				</div>
 			</div>
 		</div>
-
+		<!-- Modal -->
+		<div class="modal fade" id="modalCambiarMoneda" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered modal-sm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">
+							<span>Cambiar de moneda</span>
+						</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<label for="" >Elija la moneda para cambiar</label>
+						<select class="form-control" id="" v-model="nuevaMoneda">
+							<option v-for="moneda in monedas" :value="moneda.idMoneda">{{moneda.monDescripcion}}</option>
+						</select>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-outline-success" data-dismiss="modal" @click="updateCoin()"><i class="icofont-refresh"></i> Actualizar </button>
+					</div>
+				</div>
+			</div>
+		</div>
 	</section>
 </div>
 
@@ -314,7 +357,7 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 		data() {
 			return {
 				fecha: moment().format('YYYY-MM-DD'), caja:{abierto:0}, apertura:0, observacion:'', registros:{ingresos:{}, salidas:{}, ventas:{}}, entrada: { idProceso: -1, monto: 0, descripcion:''},
-				ventas:[], cuadres:[]
+				ventas:[], cuadres:[], monedas:[], nuevaMoneda:null, idGlobal:null, tipo:'', indexGlobal:null,sumaOtrosVentas:0, sumaOtrosIngresos:0, sumaOtrosSalidas:0
 			}
 		},
 		mounted(){
@@ -378,6 +421,7 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 					this.registros.ventas = resp.ventas;
 					this.registros.ingresos = resp.ingresos;
 					this.registros.salidas = resp.salidas;
+					this.monedas = resp.monedas;
 					console.log(resp)} )
 			},
 			async cerrarCaja(){
@@ -465,31 +509,83 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 			},
 			menos1Hora(fechita){
 				return moment(fechita).subtract(1, 'hour').format('DD/MM/YYYY hh:mm a')
+			},
+			queMoneda(id){
+				return this.monedas.find(x=> x.idMoneda == id).monDescripcion;
+			},
+			cambiarMoneda(id, moneda, index, tipo){
+				this.idGlobal = id;
+				this.nuevaMoneda = moneda;
+				this.tipo = tipo;
+				this.indexGlobal = index;
+				$('#modalCambiarMoneda').modal('show')
+			},
+			async updateCoin(){
+				if(this.nuevaMoneda){
+					let datos = new FormData();
+					datos.append('accion', 'cambiarMoneda')
+					datos.append('id', this.idGlobal);
+					datos.append('tipo', this.tipo);
+					datos.append('idMoneda', this.nuevaMoneda);
+					await fetch('php/caja.php',{
+						method:'POST', body:datos
+					})
+					.then(serv => serv.text())
+					.then(resp => {
+						console.log(resp)
+						if( resp =='ok' ){
+							switch (this.tipo) {
+								case 'venta':
+									this.registros.ventas[this.indexGlobal].moneda = this.nuevaMoneda; break;
+								case 'ingresos':
+									this.registros.ingresos[this.indexGlobal].moneda = this.nuevaMoneda; break;
+								case 'salidas':
+									this.registros.salidas[this.indexGlobal].moneda = this.nuevaMoneda; break;
+								default: break;
+							}
+							alertify.notify('<i class="icofont-check"></i> Registro actualizado', 'success', 5);
+						}else
+							alertify.notify('<i class="icofont-exclamation-circle"></i> Hubo un error actualizando', 'danger', 5);
+					})
+				}
 			}
 		},
 		computed:{
 			sumaVentas(){
-				let suma = 0;
+				this.sumaOtrosVentas =0; this.sumaOtrosIngresos =0; this.sumaOtrosSalidas =0; 
+				let suma = 0, sumaOtros=0;
 				if( Array.isArray(this.registros.ventas) )
 					this.registros.ventas.forEach(elemento => {
-						suma += parseFloat(elemento.totalFinal)
+						if(elemento.moneda =='1')
+							suma += parseFloat(elemento.totalFinal)
+						else
+							sumaOtros += parseFloat(elemento.totalFinal)
 					});
+				this.sumaOtrosVentas = sumaOtros;
 				return suma.toFixed(2)
 			},
 			sumaSalidas(){
-				let suma = 0;
+				let suma = 0, sumaOtros=0;
 				if( Array.isArray(this.registros.salidas) )
 					this.registros.salidas.forEach(elemento => {
-						suma += parseFloat(elemento.monto)
+						if(elemento.moneda =='1')
+							suma += parseFloat(elemento.monto)
+						else
+							sumaOtros += parseFloat(elemento.monto)
 					});
+				this.sumaOtrosIngresos = sumaOtros;
 				return suma.toFixed(2)
 			},
 			sumaIngresos(){
-				let suma = 0;
+				let suma = 0, sumaOtros=0;
 				if( Array.isArray(this.registros.ingresos) )
 					this.registros.ingresos.forEach(elemento => {
-						suma += parseFloat(elemento.monto)
+						if(elemento.moneda =='1')
+							suma += parseFloat(elemento.monto)
+						else
+							sumaOtros += parseFloat(elemento.monto)
 					});
+				this.sumaOtrosSalidas = sumaOtros;
 				return suma.toFixed(2)
 			},
 			

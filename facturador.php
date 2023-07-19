@@ -433,7 +433,7 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 								<div class="input-group">
 									<input type="mail" class="form-control" id="txtCorreo" autocomplete="off" value="">
 									<div class="input-group-append">
-										<button class="btn btn-outline-secondary" type="button" onclick="btnEnviarCorreo()"><i class="icofont-share-alt"></i> Enviar</button>
+										<button class="btn btn-outline-secondary" type="button" onclick="btnEnviarCorreo()" data-dismiss="modal"><i class="icofont-share-alt"></i> Enviar</button>
 									</div>
 								</div>
 							</div>
@@ -1430,12 +1430,17 @@ async function  btnEnviarCorreo(){
 			method:'POST', body: datos
 		});
 		const respuesta = await servidor.text()
-		console.log(respuesta);
+		if(respuesta =='Mensaje entregado')
+			alertify.notify('<i class="icofont-check"></i> Mensaje enviado', 'success', 5);
+			else
+			alertify.notify('<i class="icofont-check"></i> Hubo un problema con el servidor SMTP', 'danger', 5);
 	}
 
 }
 function btnEnviarWhatsapp(){
-	window.open('https://wa.me/51'+ document.getElementById('txtWhatsapp').value + '?text='+ `Su Comprobante ${$.serie}-${$.correlativo} puede ser revisado online desde: ` + encodeURIComponent(`https://grupotecnologicoperu.com/facturador/ticket.php?serie=${$.serie}&correlativo=${$.correlativo}`))
+	const celular = document.getElementById('txtWhatsapp').value;
+	if(celular)
+		window.open('https://wa.me/51'+ document.getElementById('txtWhatsapp').value + '?text='+ `Su Comprobante ${$.serie}-${$.correlativo} puede ser revisado online desde: ` + encodeURIComponent(`https://grupotecnologicoperu.com/facturador/printComprobantePDF.php?serie=${$.serie}&correlativo=${$.correlativo}`), '_blank')
 	
 }
 
