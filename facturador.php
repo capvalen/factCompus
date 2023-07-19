@@ -431,9 +431,9 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 						<div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
 							<div class="card-body">
 								<div class="input-group">
-									<input type="mail" class="form-control">
+									<input type="mail" class="form-control" id="txtCorreo" autocomplete="off" value="">
 									<div class="input-group-append">
-										<button class="btn btn-outline-secondary" type="button" id="button-addon2"><i class="icofont-share-alt"></i> Enviar</button>
+										<button class="btn btn-outline-secondary" type="button" onclick="btnEnviarCorreo()"><i class="icofont-share-alt"></i> Enviar</button>
 									</div>
 								</div>
 							</div>
@@ -450,19 +450,15 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 						<div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
 							<div class="card-body">
 								<div class="input-group">
-									<input type="text" class="form-control">
+									<input type="text" class="form-control" id="txtWhatsapp" autocomplete="off">
 									<div class="input-group-append">
-										<button class="btn btn-outline-secondary" type="button" id="button-addon2"><i class="icofont-share-alt"></i> Enviar</button>
+										<button class="btn btn-outline-secondary" type="button" onclick="btnEnviarWhatsapp()"><i class="icofont-share-alt"></i> Enviar</button>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-			<div class="modal-footer">
-				<p class="text-danger d-none" id="pError3"></p>
-				<button type="button" class="btn btn-primary" id="btnUpdatePrecios"><i class="icofont-refresh"></i> Actualizar precios</button>
 			</div>
 		</div>
 	</div>
@@ -1383,6 +1379,8 @@ function calcularVuelto(){
 	}
 }
 
+$.serie='', $.correlativo='';
+
 function prepararTransformacion(id){
 	$.idComprobante = id;
 	$.ajax({url: 'php/prepararConversion.php', type: 'POST', data: { id: $.idComprobante }}).done(function(resp) {
@@ -1398,7 +1396,6 @@ function transformar(){
 		location.reload();
 	});
 }
-$.serie='', $.correlativo='';
 function compartir(serie, correlativo){
 	// Verificamos si el navegador tiene soporte para el API compartir
 	if ('share' in navigator) {
@@ -1420,6 +1417,26 @@ function compartir(serie, correlativo){
 function compartirPc(serie, correlativo){
 	$.serie= serie;
 	$.correlativo = correlativo;
+}
+
+async function  btnEnviarCorreo(){
+	const correo = document.getElementById('txtCorreo').value;
+	if(correo){
+		let datos = new FormData()
+		datos.append('correo', correo)
+		datos.append('serie', $.serie)
+		datos.append('correlativo', $.correlativo)
+		const servidor = await fetch('php/correo.php',{
+			method:'POST', body: datos
+		});
+		const respuesta = await servidor.text()
+		console.log(respuesta);
+	}
+
+}
+function btnEnviarWhatsapp(){
+	window.open('https://wa.me/51'+ document.getElementById('txtWhatsapp').value + '?text='+ `Su Comprobante ${$.serie}-${$.correlativo} puede ser revisado online desde: ` + encodeURIComponent(`https://grupotecnologicoperu.com/facturador/ticket.php?serie=${$.serie}&correlativo=${$.correlativo}`))
+	
 }
 
 

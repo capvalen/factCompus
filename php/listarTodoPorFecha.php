@@ -78,6 +78,7 @@ while($row=$resultado->fetch_assoc()){
 					<button class="btn btn-outline-secondary btn-sm border border-light imprPDFFuera d-block d-sm-none" data-toggle="tooltip" data-placement="top" title="Imprimir PDF"><i class="icofont-print"></i></button>
 					<!-- Boton compartir -->
 					<button class="btn btn-outline-primary btn-sm border border-light  d-block d-sm-none" onclick="compartir(`<?= $row['factSerie']?>`, `<?= $row['factCorrelativo'];?>`)" data-toggle="tooltip" data-placement="top" title="Compartir"><i class="icofont-share"></i></button>
+					<button class="btn btn-outline-primary btn-sm border border-light " data-toggle="modal" data-target="#modalCompartirPc" onclick="compartirPc(`<?= $row['factSerie']?>`, `<?= $row['factCorrelativo'];?>`)" data-toggle="tooltip" data-placement="top" title="Compartir Pc"><i class="icofont-share"></i></button>
 					<!-- Fin Boton compartir -->
 					
 
