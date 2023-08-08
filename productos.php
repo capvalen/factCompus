@@ -51,30 +51,32 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 			</div>
 		</div>
 
-		<div class="table-responsive" style="overflow: auto;">
-			<table class="table table-hover table-sm mt-3" id="tlbProductosTodos" >
-				<thead style="position: sticky;top: 0">
-					<tr>
-						<th class="header" scope="col" data-sort="int"><i class="icofont-expand-alt"></i> N°</th>
-						<th class="header" scope="col" data-sort="string"><i class="icofont-expand-alt"></i> Nombre de producto</th>
-						<th class="header" scope="col" data-sort="float"><i class="icofont-expand-alt"></i> Precio Público</th>
-						<th class="header" scope="col" data-sort="float"><i class="icofont-expand-alt"></i> Precio por Mayor</th>
-						<th class="header" scope="col" data-sort="float"><i class="icofont-expand-alt"></i> Precio con Dscto.</th>
-						<th class="header" scope="col" data-sort="int"><i class="icofont-expand-alt"></i> Stock</th>
-						<?php if($_COOKIE['facCambiarGravado']==1){ ?>
-						<th  class="header" scope="col" data-sort="string"><i class="icofont-expand-alt"></i> Gravado</th>
-						<?php } ?>
-						<?php if($_COOKIE['facCambiarUnidad']==1){ ?>
-						<th class="header" scope="col" data-sort="string"><i class="icofont-expand-alt"></i> Unidad</th>
-						<?php } ?>
-						<!-- <th data-sort="string"><i class="icofont-expand-alt"></i> Estado</th> -->
-						<th>@</th>
-					</tr>
-				</thead>
-				<tbody id="tbodyRespuestaProductos">
-					<?php include "php/listarTodosProductos.php"; ?>
-				</tbody>
-			</table>
+		<div style="overflow: auto;">
+			<div class="table-responsive" style="overflow: auto;">
+				<table class="table table-hover table-sm mt-3" id="tlbProductosTodos" >
+					<thead style="position: sticky;top: 0">
+						<tr>
+							<th class="header" scope="col" data-sort="int"><i class="icofont-expand-alt"></i> N°</th>
+							<th class="header" scope="col" data-sort="string"><i class="icofont-expand-alt"></i> Nombre de producto</th>
+							<th class="header" scope="col" data-sort="float"><i class="icofont-expand-alt"></i> Precio Público</th>
+							<th class="header" scope="col" data-sort="float"><i class="icofont-expand-alt"></i> Precio por Mayor</th>
+							<th class="header" scope="col" data-sort="float"><i class="icofont-expand-alt"></i> Precio con Dscto.</th>
+							<th class="header" scope="col" data-sort="int"><i class="icofont-expand-alt"></i> Stock</th>
+							<?php if($_COOKIE['facCambiarGravado']==1){ ?>
+							<th  class="header" scope="col" data-sort="string"><i class="icofont-expand-alt"></i> Gravado</th>
+							<?php } ?>
+							<?php if($_COOKIE['facCambiarUnidad']==1){ ?>
+							<th class="header" scope="col" data-sort="string"><i class="icofont-expand-alt"></i> Unidad</th>
+							<?php } ?>
+							<!-- <th data-sort="string"><i class="icofont-expand-alt"></i> Estado</th> -->
+							<th>@</th>
+						</tr>
+					</thead>
+					<tbody id="tbodyRespuestaProductos">
+						<?php include "php/listarTodosProductos.php"; ?>
+					</tbody>
+				</table>
+			</div>
 		</div>
 	</div>
 </section>
@@ -505,12 +507,23 @@ function mostrarBarras(resp){
 	}
 	$.each(JSON.parse(resp), (index, barra)=>{
 		//console.log( barra );
+	<?php if($_COOKIE['ckPower']=='1'): ?>
+
 		$('#modalBarritas tbody').append(`<tr>
 				<td >${index+1}</td>
 				<td >${barra.barra}</td>
 				<td ><button class="btn btn-outline-danger border-0 btn-sm" onclick="borrarBarra(${barra.idBarra}, ${barra.idProducto})"><i class="icofont icofont-close"></i></button></td>
 			</tr>
 		`);
+	})
+	<?php else: ?>
+		$('#modalBarritas tbody').append(`<tr>
+				<td >${index+1}</td>
+				<td >${barra.barra}</td>
+				<td ></td>
+			</tr>
+		`);
+		<?php endif ?>
 	})
 }
 function borrarBarra(idBarra, idProd){
@@ -616,9 +629,9 @@ function Exportar(){
 		width: 360px!important;
 		right: 390px!important;
 	}
-	.header{
-		position:sticky!important;
-		top: 0 !important;
+	.header {
+		position: sticky;
+		top:0;
 	}
 </style>
 </body>

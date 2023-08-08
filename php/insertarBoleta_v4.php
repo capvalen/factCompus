@@ -85,11 +85,11 @@ if($filasCorrelativo==0){
 $sql="INSERT INTO `fact_cabecera`(`idComprobante`, `factTipoDocumento`, `factSerie`, `factCorrelativo`, `fechaEmision`, `horaEmision`, `tipDocUsuario`,
  `dniRUC`, `razonSocial`,
  `factExonerados`, `costoFinal`, `IGVFinal`, `totalFinal`,`sumImpVenta`, `mtoBaseImponible`, `mtoTributo`, `desLeyenda`,
-  `comprobanteEmitido`, `comprobanteFechado`, `cliDireccion`, `factPlaca`, idTicket, `idCaja`)
+  `comprobanteEmitido`, `comprobanteFechado`, `cliDireccion`, `factPlaca`, idTicket, `idCaja`, `esContado`)
 VALUES (null,{$_POST['cabecera']['tipo']},'{$serie}','{$correlativo}',{$fecha}, curtime(),{$tipoDoc},
 	'{$_POST['cliente']['dni']}', '{$_POST['cliente']['razon']}',
 	{$exonerados}, {$baseTotal}, {$igvTotal}, {$sumaTotal}, {$sumaTotal}, {$baseTotal}, {$igvTotal}, '{$letras}',
-	1,now(), '{$_POST['cliente']['direccion']}', '', {$_POST['cabecera']['tipo']}, {$_POST['idCaja']} );";
+	1,now(), '{$_POST['cliente']['direccion']}', '', {$_POST['cabecera']['tipo']}, {$_POST['idCaja']}, {$_POST['pagoTotal']} );";
 	//echo $sql;
 
 $factura =  $serie.'-'.$correlativo;

@@ -16,10 +16,11 @@ group by fd.idCabecera; ";
 //echo $sqlSeries; 
 $resultadoSeries=$esclavo->query($sqlSeries);
 $rowSeries=$resultadoSeries->fetch_assoc();
+//var_dump( $rowSeries);
 
 $sqlCreditos = "SELECT c.*, date_format(c.fecha, '%d/%m/%Y') as fechaLatam FROM `creditos` c where idComprobante = {$rowSeries['idComprobante']};";
 $respCreditos = $esclavo->query($sqlCreditos);
-//echo 'cant. creditos son '. $respCreditos->num_rows; die();
+//echo 'cant. creditos son '. var_dump($respCreditos->num_rows); die();
 
 
 $caso = "-0{$rowSeries['factTipoDocumento']}-"; // 01 para factura, 03 para boleta

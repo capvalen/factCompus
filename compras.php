@@ -196,7 +196,7 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 							</table>
 							
 							<div class='d-flex justify-content-end mt-3'>
-								<button type='button' class='btn btn-outline-primary btn-sm' data-dismiss="modal" @click="guardar()"><i class="icofont-paper"></i> Guardar compra</button>
+								<button type='button' class='btn btn-outline-primary btn-sm' @click="guardar()"><i class="icofont-paper"></i> Guardar compra</button>
 							</div>
 						</div>
 					</div>
@@ -316,16 +316,28 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 				$('#tLineasSerie input').eq(index).val('').focus();
 			},
 			guardar(){
-				axios.post('php/guardarCompra.php', {
-					cabecera: this.cabecera, cesta: this.separados
-				})
-				.then(res=> { console.log(res.data)
-					if(res.data=='ok'){alert('Compra guardada'); location.reload();}
-				})
+				if(this.verificarTodasCasillas())
+					$('#modalRellenarSeries').modal('hide')
+					axios.post('php/guardarCompra.php', {
+						cabecera: this.cabecera, cesta: this.separados
+					})
+					.then(res=> { console.log(res.data)
+						if(res.data=='ok'){alert('Compra guardada'); location.reload();}
+					})
+				else
+					alertify.error('<i class="bi bi-info-circle"></i> Todas las series se deben rellenar obligatoriamente').delay(15);
 			},
 			quitarCesta(index){
 				this.cesta.splice(index,1)
 				this.cesta.splice(index,1)
+			},
+			verificarTodasCasillas(){
+				var todos = document.querySelectorAll('#tLineasSerie input');
+				let retorno = true;
+				for (const input of todos) {
+					if( $.trim(input.value) == '') return false
+				}
+				return retorno;
 			}
 		}
   }).mount('#app')

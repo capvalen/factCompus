@@ -323,7 +323,7 @@
 
 <script src="../js/jquery.min.js"></script>
 <script src="../js/bootstrap.min.js"></script>
-<script src="../js/vue_dev.js"></script>
+<script src="../js/vue_dev.js?v=2.7"></script>
 <script src="../js/axios.min.js"></script>
 <script src="../js/alertify.min.js"></script>
 <script src="../js/moment.js"></script>
@@ -708,7 +708,7 @@
 			guardar(){
 				let cabecera = { tipo: this.tipoVenta, serie: this.serie, fecha: moment().format('YYYY-MM-DD') }
 				axios.post('../php/insertarBoleta_v4.php', {empresa: this.empresa, cliente: this.clienteActual, cabecera: cabecera, jsonProductos: this.separados, idCaja: '<?= $cajaAbierta['id']?>',
-					pagoTotal: this.pagoTotal ? 1 : 0, //0 indica que se paga en partes
+					pagoTotal: this.pagoTotal ? 1 : 2, //2 indica que se paga en partes
 					creditos: this.creditos
 				})
 				.then((response)=>{ console.log( response.data );
@@ -819,6 +819,7 @@
 				this.canasta.forEach(caso => {
 					sumaTodo+=parseFloat(caso.subTotal);
 				});
+				this.credito.monto = sumaTodo;
 				return parseFloat(sumaTodo).toFixed(2);
 			}
 		}
@@ -840,7 +841,7 @@
         -ms-user-select: none; /* Internet Explorer/Edge */
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
-}
+	}
 	#divRegistroCliente input{
 		margin: 0.5rem 0;
 	}

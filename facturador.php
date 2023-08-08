@@ -54,8 +54,8 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 			</div></div>
 		<?php if($cajaAbierta['abierto']==0): ?>
 			<section>
-			<div class="alert alert-danger mt-2 alert-dismissible fade show" role="alert">
-				<i class="icofont-warning-alt"></i> No hay ninguna caja abierta, debe abrir una caja para hacer ventas. <a href="caja.php" style="color:white; font-weight: bold">Ingrese acá para aperturar.</a>
+			<div class="alert alert-warning mt-2 alert-dismissible fade show" role="alert">
+				<i class="icofont-warning-alt"></i> No hay ninguna caja abierta, debe abrir una caja para hacer ventas. <a href="caja.php" class="text-warning" style=" font-weight: bold">Ingrese acá para aperturar.</a>
 				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>

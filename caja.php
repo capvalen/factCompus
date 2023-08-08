@@ -90,6 +90,7 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 							<th>Comprobante</th>
 							<th>Monto</th>
 							<th>Moneda</th>
+							<th>Crédito</th>
 							<th>@</th>
 						</tr>
 					</thead>
@@ -98,8 +99,15 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 							<td>{{ index+1 }}</td>
 							<td>{{ venta.razonSocial }}</td>
 							<td>{{ venta.factSerie }}-{{ venta.factCorrelativo }}</td>
-							<td>+ S/ {{ parseFloat(venta.totalFinal).toFixed(2) }}</td>
+							<td>
+								<span v-if="venta.esContado=='1'">+ S/ {{ parseFloat(venta.totalFinal).toFixed(2) }}</span>
+								<span v-else>S/ 0.00</span>
+							</td>
 							<td>{{queMoneda(venta.moneda)}}</td>
+							<td>
+								<span v-if="venta.esContado=='1'">No</span>
+								<span v-else>Si</span>
+							</td>
 							<td> <button class="btn btn-sm btn-outline-primary" title="Cambiar moneda" @click="cambiarMoneda(venta.idComprobante, venta.moneda, index, 'venta')"><i class="icofont-exchange"></i></button> </td>
 						</tr>
 					</tbody>
@@ -135,8 +143,10 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 							<td class="text-capitalize">{{ ingreso.descripcion }}</td>
 							<td>{{ parseFloat(ingreso.monto).toFixed(2) }}</td>
 							<td>{{queMoneda(ingreso.moneda)}}</td>
-							<td> <button class="btn btn-sm btn-outline-primary" title="Cambiar moneda" @click="cambiarMoneda(ingreso.id, ingreso.moneda, index, 'ingreso')"><i class="icofont-exchange"></i></button> </td>
-							<td><button class="btn btn-outline-danger" @click="borrarEntrada(ingreso.id, 'ingreso', index)"><i class="icofont-ui-delete"></i></button></td>
+							<td>
+								<button class="btn btn-sm btn-outline-primary btn-sm border-0" title="Cambiar moneda" @click="cambiarMoneda(ingreso.id, ingreso.moneda, index, 'ingreso')"><i class="icofont-exchange"></i></button>
+								<button class="btn btn-outline-danger btn-sm border-0" @click="borrarEntrada(ingreso.id, 'ingreso', index)"><i class="icofont-ui-delete"></i></button>
+							</td>
 						</tr>
 						<tr v-if="registros.ingresos.length == 0">
 							<td colspan="4">No hay datos registrados en ingresos de dinero</td>
@@ -173,8 +183,9 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 							<td class="text-capitalize">{{ salida.descripcion }}</td>
 							<td>{{ parseFloat(salida.monto).toFixed(2) }}</td>
 							<td>{{queMoneda(salida.moneda)}}</td>
-							<td> <button class="btn btn-sm btn-outline-primary" title="Cambiar moneda" @click="cambiarMoneda(salida.id, salida.moneda, index, 'salida')"><i class="icofont-exchange"></i></button> </td>
-							<td><button class="btn btn-outline-danger" @click="borrarEntrada(salida.id, 'salida', index)"><i class="icofont-ui-delete"></i></button></td>
+							<td> <button class="btn btn-sm btn-outline-primary btn-sm border-0" title="Cambiar moneda" @click="cambiarMoneda(salida.id, salida.moneda, index, 'salida')"><i class="icofont-exchange"></i></button>
+								<button class="btn btn-outline-danger btn-sm border-0" @click="borrarEntrada(salida.id, 'salida', index)"><i class="icofont-ui-delete"></i></button>
+							</td>
 						</tr>
 						<tr v-if="registros.salidas.length == 0">
 							<td colspan="4">No hay datos registrados en salidas de dinero</td>
@@ -356,7 +367,7 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 	createApp({
 		data() {
 			return {
-				fecha: moment().format('YYYY-MM-DD'), caja:{abierto:0}, apertura:0, observacion:'', registros:{ingresos:{}, salidas:{}, ventas:{}}, entrada: { idProceso: -1, monto: 0, descripcion:''},
+				fecha: moment().format('YYYY-MM-DD'), caja:{abierto:0}, apertura:0, observacion:'', registros:{ingresos:[], salidas:[], ventas:[]}, entrada: { idProceso: -1, monto: 0, descripcion:''},
 				ventas:[], cuadres:[], monedas:[], nuevaMoneda:null, idGlobal:null, tipo:'', indexGlobal:null,sumaOtrosVentas:0, sumaOtrosIngresos:0, sumaOtrosSalidas:0
 			}
 		},
@@ -450,8 +461,12 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 					if(resp.idEntrada) this.registros.ingresos.push({idEntrada: resp.idProceso,
 						monto: this.entrada.monto,
 						descripcion: this.entrada.descripcion,
-						idProceso: this.entrada.idProceso
+						idProceso: this.entrada.idProceso,
+						moneda: 1
 					})
+					this.entrada.monto = 0;
+					this.entrada.descripcion = '';
+					this.entrada.idProceso= -1;
 				})
 			},
 			async guardarSalida(){
@@ -468,8 +483,12 @@ if( !isset($_COOKIE['ckidUsuario']) ){ header("Location: index.html");
 					if(resp.idEntrada) this.registros.salidas.push({idEntrada: resp.idProceso,
 						monto: this.entrada.monto,
 						descripcion: this.entrada.descripcion,
-						idProceso: this.entrada.idProceso
+						idProceso: this.entrada.idProceso,
+						moneda: 1
 					})
+					this.entrada.monto = 0;
+					this.entrada.descripcion = '';
+					this.entrada.idProceso= -1;
 				})
 			},
 			async borrarEntrada(id, tipo, index){
