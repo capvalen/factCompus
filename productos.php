@@ -508,14 +508,12 @@ function mostrarBarras(resp){
 	$.each(JSON.parse(resp), (index, barra)=>{
 		//console.log( barra );
 	<?php if($_COOKIE['ckPower']=='1'): ?>
-
 		$('#modalBarritas tbody').append(`<tr>
 				<td >${index+1}</td>
 				<td >${barra.barra}</td>
 				<td ><button class="btn btn-outline-danger border-0 btn-sm" onclick="borrarBarra(${barra.idBarra}, ${barra.idProducto})"><i class="icofont icofont-close"></i></button></td>
 			</tr>
 		`);
-	})
 	<?php else: ?>
 		$('#modalBarritas tbody').append(`<tr>
 				<td >${index+1}</td>
@@ -523,8 +521,9 @@ function mostrarBarras(resp){
 				<td ></td>
 			</tr>
 		`);
-		<?php endif ?>
+		<?php endif; ?>
 	})
+	
 }
 function borrarBarra(idBarra, idProd){
 	$.ajax({url: 'php/borrarBarra.php', type: 'POST', data: { idBarra: idBarra}}).done(function(resp) { //console.log(resp)
