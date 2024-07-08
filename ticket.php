@@ -7,7 +7,6 @@ include 'generales.php';
 require "NumeroALetras.php";
 
 
-
 $sqlSeries="SELECT fc.`idComprobante`, `factTipoDocumento`, case `factTipoDocumento` when 1 then 'FACTURA ELECTRÓNICA' when 3 then 'BOLETA ELECTRÓNICA' when -1 then 'PROFORMA' when 0 then 'TICKET' end as 'queDoc', `factSerie`, `factCorrelativo`, `tipOperacion`, fc.`fechaEmision`, `fechaVencimiento`, `codLocalEmisor`, `tipDocUsuario`, `dniRUC`, `razonSocial`, `tipoMoneda`, `costoFinal`, `IGVFinal`, `totalFinal`, `sumDescTotal`, `sumOtrosCargos`, `sumTotalAnticipos`, `sumImpVenta`, `ublVersionId`, `customizationId`, `ideTributo`, `nomTributo`, `codTipTributo`, `mtoBaseImponible`, `mtoTributo`, `codLeyenda`, `desLeyenda`, `comprobanteEmitido`, `comprobanteFechado`, count(fd.codItem) as cantFilas
 FROM `fact_cabecera` fc
 inner join fact_detalle fd on concat(fc.factSerie, '-', fc.factCorrelativo) = fd.facSerieCorre
@@ -85,7 +84,7 @@ $pdf->SetFont('Arial','B',10);    //Letra Arial, negrita (Bold), tam. 20
 $textypos = 5;
 $pdf->setY(2);
 $pdf->setX(2);
-$pdf->Image('./images/empresa_black.png', 20, 0, -300);
+$pdf->Image('./images/empresa_black.jpg', 20, 0, -300);
 $pdf->setY(23);
 $pdf->Ln();
 $pdf->Cell( 0, $textypos, utf8_decode($soy), 0, 0, 'C');

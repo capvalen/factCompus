@@ -37,13 +37,13 @@ foreach ($productos as $variable) {
     $todoProd = $todoProd .  ucwords($variable['descripcion']) . ( $variable['serie']!='' ) ? " SN: {$variable['serie']}" : ''."\n              ".$variable['cantidad']." ".$variable['undCorto']."   ". "S/ ". number_format($variable['preProducto'],2).'   S/ '. number_format($variable['precio'],2)."\n";
 }
 //echo $todoProd;
-if($_POST['queEs']!='PROFORMA' && $_POST['queEs']!="NOTA DE PEDIDO"){ $queEs = $_POST['queEs'] . " ELECTRÓNICA"; }else{ $queEs = $_POST['queEs']; }
+if($_POST['queEs']!='RECETA MÉDICA' && $_POST['queEs']!="VENTA INTERNA"){ $queEs = $_POST['queEs'] . " ELECTRÓNICA"; }else{ $queEs = $_POST['queEs']; }
 if (isset($_POST['ticketera'])){ $nombrePrint= $_POST['ticketera'];}
 
 $connectorV31 = new WindowsPrintConnector("smb://127.0.0.1/".$nombrePrint);
 try {
 
-    $tux = EscposImage::load(".\images\casadebarro_black.jpg", false);
+    $tux = EscposImage::load(".\images\empresa.jpg", false);
     $tuxQR = EscposImage::load("qrcode.png", false);
 
     $printer = new Printer($connectorV31);

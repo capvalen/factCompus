@@ -1,11 +1,13 @@
 <?php 
+ini_set('display_errors', 1);
+
 date_default_timezone_set('America/Lima');
 include 'conexion.php';
 include __DIR__.'/../generales.php';
 require "../NumeroALetras.php";
 
 $_POST = json_decode(file_get_contents('php://input'),true); 
-//var_dump( $_POST); die();
+//var_dump( $_POST['cliente']['dni']); die();
 
 
 /* Verifico si existe, el cliente, sino lo guardo */
@@ -24,8 +26,8 @@ $caso = "-0{$_POST['cabecera']['tipo']}-"; // 01 para factura, 03 para boleta
 switch ($_POST['cabecera']['tipo']) {
 	case '1': $soy="FACTURA"; break;
 	case '3': $soy="BOLETA DE VENTA"; break;
-	case '0': $soy="NOTA DE PEDIDO"; break;
-	case '-1': $soy="PROFORMA"; break;
+	case '0': $soy="VENTA INTERNA"; break; //NOTA DE PEDIDO
+	case '-1': $soy="RECETA MÉDICA"; break; // VENTA INTERNA
 	default: # code... break;
 }
 $serie = $_POST['cabecera']['serie'];
@@ -136,7 +138,8 @@ for ($i=0; $i < count($productos) ; $i++) {
 			 $_POST['proceso']='3';
 			 $_POST['cantidad']=$canti;
 			 $_POST['obs']='';
-			 if( $soy <> "PROFORMA" ) require 'updateStock.php';
+			 require 'updateStock.php';
+			 //if( $soy <> "PROFORMA" ) 
 		 }
 
 		 if( $_POST['pagoTotal']=='0' ){
@@ -172,7 +175,7 @@ if($filasCabeza==1){
 	$lineaCabeza = $rowC['tipOperacion'].$separador.$rowC['fechaEmision'].$separador.$rowC['horaEmision'].$separador.$rowC['fechaVencimiento'].$separador. $domicilioFiscal.$separador. $tipoDoc.$separador.$rowC['dniRUC'].$separador.$rowC['razonSocial']. $separador.$rowC['tipoMoneda'].$separador. $igvFin.$separador. $costo.$separador. $totFin . $separador. $descuento.$separador. $sumaCargos.$separador.$anticipos. $separador. $totFin.$separador.$versionUbl.$separador. $customizacion.$separador;
 	//echo $lineaCabeza;
 
-	if($_POST['empresa']['crearArchivo']==1 && $soy!='NOTA DE PEDIDO' ){
+	if($_POST['empresa']['crearArchivo']==1 && ($soy!='VENTA INTERNA' || $soy == 'RECETA MÉDICA') ){
 		$dire= $_POST['empresa']['facturador'] . "\sunat_archivos\sfs\DATA/";
 		$archivo = fopen("{$dire}{$nombreArchivo}.cab", "w");
 		fwrite($archivo, "{$lineaCabeza}");
@@ -213,7 +216,7 @@ while($rowD=$resultadoDetalle->fetch_assoc()){
 }
 //echo $lineaDetalle ;
 
-if($_POST['empresa']['crearArchivo']==1 && $soy!='NOTA DE PEDIDO' ){
+if($_POST['empresa']['crearArchivo']==1 && ($soy!='VENTA INTERNA' || $soy == 'RECETA MÉDICA') ){
 	$dire= $_POST['empresa']['facturador'] . "\sunat_archivos\sfs\DATA/";
 	$detalle = fopen("{$dire}{$nombreArchivo}.det", "w");
 	fwrite($detalle, "{$lineaDetalle}");
