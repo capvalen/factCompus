@@ -1,13 +1,13 @@
 <?php
 //Rellenar por cada Cliente:
-$dirBaseSunat = 'D:\Fac_Casabarro_1.3.4.4\sunat_archivos\sfs';
+$dirBaseSunat = 'D:\SFS_2.1\sunat_archivos\sfs';
 $directorio = $dirBaseSunat. '\DATA/';
 $dirRespuestas = $dirBaseSunat. '\RPTA/';
 
-$rucEmisor ='20602769331';
-$nombreEmisor = "GRUPO TECNOLOGICO C & C S.A.C.";
-$direccionEmisor = "Dirección: Av. Giraldez 2do Nivel Oficina 204 - Huancayo - Junín";
-$celularEmisor = "946296578";
+$rucEmisor ='20612115771';
+$nombreEmisor = "Botica's Clinical Home SAC";
+$direccionEmisor = "Jr. General Gamarra 1173 Chilca - Huancayo - Huancayo - Junín";
+$celularEmisor = "939784647";
 $nombrePrint = 'CAJA'; //TM-T20II
 
 $casaHost = "pluginSunat";
@@ -57,7 +57,7 @@ $valorVentaInvoce='10.00';
 $gratuito ='0.00';
 $monedaC = 'PEN';
 
-$_POST['accion'] = 'verificarCaja'; 
+$_POST['accion'] = 'verificarCaja';
 ob_start();
 require_once( __DIR__ .'/php/caja.php');
 $cajaAbierta = json_decode(ob_get_clean(), true);

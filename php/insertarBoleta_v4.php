@@ -175,7 +175,7 @@ if($filasCabeza==1){
 	$lineaCabeza = $rowC['tipOperacion'].$separador.$rowC['fechaEmision'].$separador.$rowC['horaEmision'].$separador.$rowC['fechaVencimiento'].$separador. $domicilioFiscal.$separador. $tipoDoc.$separador.$rowC['dniRUC'].$separador.$rowC['razonSocial']. $separador.$rowC['tipoMoneda'].$separador. $igvFin.$separador. $costo.$separador. $totFin . $separador. $descuento.$separador. $sumaCargos.$separador.$anticipos. $separador. $totFin.$separador.$versionUbl.$separador. $customizacion.$separador;
 	//echo $lineaCabeza;
 
-	if($_POST['empresa']['crearArchivo']==1 && ($soy!='VENTA INTERNA' || $soy == 'RECETA MÉDICA') ){
+	if($_POST['empresa']['crearArchivo']==1 && ($soy!='VENTA INTERNA' && $soy != 'RECETA MÉDICA') ){
 		$dire= $_POST['empresa']['facturador'] . "\sunat_archivos\sfs\DATA/";
 		$archivo = fopen("{$dire}{$nombreArchivo}.cab", "w");
 		fwrite($archivo, "{$lineaCabeza}");
@@ -216,7 +216,7 @@ while($rowD=$resultadoDetalle->fetch_assoc()){
 }
 //echo $lineaDetalle ;
 
-if($_POST['empresa']['crearArchivo']==1 && ($soy!='VENTA INTERNA' || $soy == 'RECETA MÉDICA') ){
+if($_POST['empresa']['crearArchivo']==1 && ($soy!='VENTA INTERNA' && $soy != 'RECETA MÉDICA') ){
 	$dire= $_POST['empresa']['facturador'] . "\sunat_archivos\sfs\DATA/";
 	$detalle = fopen("{$dire}{$nombreArchivo}.det", "w");
 	fwrite($detalle, "{$lineaDetalle}");
